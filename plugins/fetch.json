@@ -1,0 +1,10 @@
+{
+  "cordova-plugin-ble-peripheral": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-ble-peripheral"
+    },
+    "is_top_level": true,
+    "variables": {}
+  }
+}
