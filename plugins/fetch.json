@@ -1,8 +1,8 @@
 {
-  "cordova-plugin-ble-peripheral": {
+  "cordova-plugin-simple-beacon": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-ble-peripheral"
+      "id": "cordova-plugin-simple-beacon"
     },
     "is_top_level": true,
     "variables": {}

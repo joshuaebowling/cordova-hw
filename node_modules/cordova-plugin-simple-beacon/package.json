@@ -1,0 +1,60 @@
+{
+  "_from": "cordova-plugin-simple-beacon",
+  "_id": "cordova-plugin-simple-beacon@1.1.0",
+  "_inBundle": false,
+  "_integrity": "sha512-ww1umWcZ1RtBLLZ9kr8fAq5L+ctHlSM6s0Iz7DYD/qijPfy3G8w6OuhydJHkAQZvi5K4eiuraBoFTempTqJGPg==",
+  "_location": "/cordova-plugin-simple-beacon",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cordova-plugin-simple-beacon",
+    "name": "cordova-plugin-simple-beacon",
+    "escapedName": "cordova-plugin-simple-beacon",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-simple-beacon/-/cordova-plugin-simple-beacon-1.1.0.tgz",
+  "_shasum": "70d6b3fdceeb795736412a46999f3698a1db6122",
+  "_spec": "cordova-plugin-simple-beacon",
+  "_where": "/home/josh/Documents/workspace/phonegap/hw",
+  "author": {
+    "name": "John Murray"
+  },
+  "bugs": {
+    "url": "https://github.com/blackberry/WebWorks-Community-APIs/issues"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "cordova-plugin-simple-beacon",
+    "platforms": [
+      "blackberry10",
+      "android",
+      "ios"
+    ]
+  },
+  "deprecated": false,
+  "description": "BlackBerry 10 Community Contributed SimpleXpBeaconPlugin API",
+  "homepage": "https://github.com/blackberry/WebWorks-Community-APIs/tree/master/BB10-Cordova/simplexpbeaconplugin#readme",
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-blackberry10",
+    "cordova-android",
+    "cordova-ios",
+    "beacon",
+    "ibeacon",
+    "bluetooth"
+  ],
+  "license": "Apache 2.0",
+  "name": "cordova-plugin-simple-beacon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackberry/WebWorks-Community-APIs.git"
+  },
+  "version": "1.1.0"
+}
