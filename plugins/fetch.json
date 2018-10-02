@@ -1,8 +1,8 @@
 {
-  "cordova-plugin-simple-beacon": {
+  "cordova-plugin-bluetoothle": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-simple-beacon"
+      "id": "cordova-plugin-bluetoothle@4.4.4"
     },
     "is_top_level": true,
     "variables": {}

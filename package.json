@@ -10,11 +10,11 @@
     "author": "Apache Cordova Team",
     "license": "Apache-2.0",
     "dependencies": {
-        "cordova-plugin-simple-beacon": "^1.1.0"
+        "cordova-plugin-bluetoothle": "^4.4.4"
     },
     "cordova": {
         "plugins": {
-            "cordova-plugin-simple-beacon": {}
+            "cordova-plugin-bluetoothle": {}
         }
     }
 }
