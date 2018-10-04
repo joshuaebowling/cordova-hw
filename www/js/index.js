@@ -28,6 +28,14 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+        var parms = {
+            "request": true,
+            "statusReceiver": false,
+            "restoreKey" : "bluetoothleplugin"
+        };
+        bluetoothle.initialize((result) => {
+            alert(JSON.stringify(result));
+        }, parms);
     },
 
     // Update DOM on a Received Event
