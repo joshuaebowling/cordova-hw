@@ -37,38 +37,37 @@ var app = {
         };
 
         bluetoothle.initializePeripheral((result) => {
-            var params = {
-                service: "1234",
-                characteristics: [
-                  {
-                    uuid: "ABCD",
-                    permissions: {
-                      read: true,
-                      write: true,
-                      //readEncryptionRequired: true,
-                      //writeEncryptionRequired: true,
-                    },
-                    properties : {
-                      read: true,
-                      writeWithoutResponse: true,
-                      write: true,
-                      notify: true,
-                      indicate: true,
-                      //authenticatedSignedWrites: true,
-                      //notifyEncryptionRequired: true,
-                      //indicateEncryptionRequired: true,
-                    }
-                  }
-                ]
-              };
-              bluetoothle.addService((result) => {
+            // var params = {
+            //     service: "1234",
+            //     characteristics: [
+            //       {
+            //         uuid: "ABCD",
+            //         permissions: {
+            //           read: true,
+            //           write: true,
+            //           //readEncryptionRequired: true,
+            //           //writeEncryptionRequired: true,
+            //         },
+            //         properties : {
+            //           read: true,
+            //           writeWithoutResponse: true,
+            //           write: true,
+            //           notify: true,
+            //           indicate: true,
+            //           //authenticatedSignedWrites: true,
+            //           //notifyEncryptionRequired: true,
+            //           //indicateEncryptionRequired: true,
+            //         }
+            //       }
+            //     ]
+            //   };
                 var params = {
                     "services":["45745c60-7b1a-11e8-9c9c-2d42b21b1a3"], //iOS
                     "service":"45745c60-7b1a-11e8-9c9c-2d42b21b1a3", //Android
                     "name":"Hello World",
                   };
+                  bluetoothle.isAdvertising((res) => {alert(res)});
                   bluetoothle.startAdvertising(onErr, onErr, params);
-              }, onErr, params);
         }, onErr, parms);
     },
 
