@@ -37,7 +37,33 @@ var app = {
         };
 
         bluetoothle.initializePeripheral((result) => {
-            alert(JSON.stringify(result));
+            var params = {
+                service: "1234",
+                characteristics: [
+                  {
+                    uuid: "ABCD",
+                    permissions: {
+                      read: true,
+                      write: true,
+                      //readEncryptionRequired: true,
+                      //writeEncryptionRequired: true,
+                    },
+                    properties : {
+                      read: true,
+                      writeWithoutResponse: true,
+                      write: true,
+                      notify: true,
+                      indicate: true,
+                      //authenticatedSignedWrites: true,
+                      //notifyEncryptionRequired: true,
+                      //indicateEncryptionRequired: true,
+                    }
+                  }
+                ]
+              };
+              bluetoothle.addService((result) => {
+                  onErr(result);
+              }, onErr, params);
         }, onErr, parms);
     },
 
