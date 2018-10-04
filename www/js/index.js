@@ -63,8 +63,8 @@ var app = {
               };
               bluetoothle.addService((result) => {
                 var params = {
-                    "services":["1234"], //iOS
-                    "service":"1234", //Android
+                    "services":["45745c60-7b1a-11e8-9c9c-2d42b21b1a3"], //iOS
+                    "service":"45745c60-7b1a-11e8-9c9c-2d42b21b1a3", //Android
                     "name":"Hello World",
                   };
                   bluetoothle.startAdvertising(onErr, onErr, params);
