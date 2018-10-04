@@ -30,12 +30,15 @@ var app = {
         this.receivedEvent('deviceready');
         var parms = {
             "request": true,
-            "statusReceiver": false,
-            "restoreKey" : "bluetoothleplugin"
+            "restoreKey" : "bluetoothlepluginPeripheral"
         };
-        bluetoothle.initialize((result) => {
+        var onErr = (err) => {
+            alert(JSON.stringify(err))
+        };
+
+        bluetoothle.initializePeripheral((result) => {
             alert(JSON.stringify(result));
-        }, parms);
+        }, onErr, parms);
     },
 
     // Update DOM on a Received Event
