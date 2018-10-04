@@ -62,7 +62,12 @@ var app = {
                 ]
               };
               bluetoothle.addService((result) => {
-                  onErr(result);
+                var params = {
+                    "services":["1234"], //iOS
+                    "service":"1234", //Android
+                    "name":"Hello World",
+                  };
+                  bluetoothle.startAdvertising(onErr, onErr, params);
               }, onErr, params);
         }, onErr, parms);
     },
