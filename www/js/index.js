@@ -1,3 +1,4 @@
+const $ = require('jquery');
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,72 +17,127 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var app = {
-    // Application Constructor
-    initialize: function() {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-    },
+(() => {
+    var advertiseParams, app, getAdvertisingParams, initialize, isAdvertise, onErr, setAdvertisingParams, startAdvertise, stopAdvertise,
+        $advertiseInfo
+    ;
+        //"services":["45745c60-7b1a-11e8-9c9c-2d42b21b1a3"], //iOS
+    advertiseParams = {
+        "service":"45745c60-7b1a-11e8-9c9c-2d42b21b1a3",
+        "name":"a"
+    };
+    
+    onErr = (err) => {
+        alert(JSON.stringify(err))
+    };
 
-    // deviceready Event Handler
-    //
-    // Bind any cordova events here. Common events are:
-    // 'pause', 'resume', etc.
-    onDeviceReady: function() {
-        this.receivedEvent('deviceready');
+    initialize = () => {
         var parms = {
             "request": true,
             "restoreKey" : "bluetoothlepluginPeripheral"
         };
-        var onErr = (err) => {
-            alert(JSON.stringify(err))
-        };
+        return new Promise((resolve, reject) =>{ 
+            bluetoothle.initialize(() => {
+                bluetoothle.initializePeripheral((result) => {
+                    var params = {
+                        service: "1234",
+                        characteristics: [
+                        {
+                            uuid: "ABCD",
+                            permissions: {
+                            read: true,
+                            write: true,
+                            //readEncryptionRequired: true,
+                            //writeEncryptionRequired: true,
+                            },
+                            properties : {
+                            read: true,
+                            writeWithoutResponse: true,
+                            write: true,
+                            notify: true,
+                            indicate: true,
+                            //authenticatedSignedWrites: true,
+                            //notifyEncryptionRequired: true,
+                            //indicateEncryptionRequired: true,
+                            }
+                        }
+                        ]
+                    };
+                    bluetoothle.addService((result) => {
+                        resolve();
+                    }, (err) => {reject(err); onErr(err);} , params);
+                }, onErr, parms);
+            });
+        });
+    };
+    startAdvertise = () => {
+        return new Promise((resolve, reject) => {
+            initialize().then(() => {
+                stopAdvertise().then(() => {
+                    bluetoothle.startAdvertising(d => { 
+                        resolve();
+                        alert('advertising started');
+                    }, d => { alert('advertising failed'); onErr(d); reject(); }, getAdvertisingParams());
+                });
+            });
+        });
+    };
+    stopAdvertise = () => {
+        return new Promise((resolve, reject) => {
+            initilize().then(() => {
+                bluetoothle.stopAdvertising(() => {
+                    resolve();
+                    alert('advertising stopped');
+                });
+            });
+        });
+    };
+    isAdvertise = () => {
+        bluetoothle.isAdvertising((result) => onErr(result));
+    };
+    setAdvertisingParams = (val) => {
+        advertiseParams = JSON.parse($advertiseInfo.val());
+    };
+    getAdvertisingParams = () => {
+        return JSON.parse($advertiseInfo.val());
+    };
+    var app = {
+        // Application Constructor
+        initialize: function() {
+            document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+        },
 
-        bluetoothle.initializePeripheral((result) => {
-            // var params = {
-            //     service: "1234",
-            //     characteristics: [
-            //       {
-            //         uuid: "ABCD",
-            //         permissions: {
-            //           read: true,
-            //           write: true,
-            //           //readEncryptionRequired: true,
-            //           //writeEncryptionRequired: true,
-            //         },
-            //         properties : {
-            //           read: true,
-            //           writeWithoutResponse: true,
-            //           write: true,
-            //           notify: true,
-            //           indicate: true,
-            //           //authenticatedSignedWrites: true,
-            //           //notifyEncryptionRequired: true,
-            //           //indicateEncryptionRequired: true,
-            //         }
-            //       }
-            //     ]
-            //   };
-                var params = {
-                    "services":["45745c60-7b1a-11e8-9c9c-2d42b21b1a3"], //iOS
-                    "service":"45745c60-7b1a-11e8-9c9c-2d42b21b1a3", //Android
-                    "name":"Hello World",
-                  };
-                  bluetoothle.isAdvertising((res) => {alert(res)});
-                  bluetoothle.startAdvertising(onErr, onErr, params);
-        }, onErr, parms);
-    },
+        // deviceready Event Handler
+        //
+        // Bind any cordova events here. Common events are:
+        // 'pause', 'resume', etc.
+        onDeviceReady: function() {
+            this.receivedEvent('deviceready');
+            $advertiseInfo = $('#advertising-info');
+            $advertiseInfo.val(JSON.stringify(advertiseParams));
+            $('#start-advertising').on('click',() => {
+                alert('click start');
 
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+                startAdvertise();
+            });
+            $('#stop-advertising').on('click',() => {
+                alert('click stop');
+                stopAdvertise();
+            });
+        },
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+        // Update DOM on a Received Event
+        receivedEvent: function(id) {
+            var parentElement = document.getElementById(id);
+            var listeningElement = parentElement.querySelector('.listening');
+            var receivedElement = parentElement.querySelector('.received');
 
-        console.log('Received Event: ' + id);
-    }
-};
+            listeningElement.setAttribute('style', 'display:none;');
+            receivedElement.setAttribute('style', 'display:block;');
+
+            console.log('Received Event: ' + id);
+        }
+    };
 
 app.initialize();
+})($);
