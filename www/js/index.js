@@ -1,5 +1,5 @@
 const $ = require('jquery');
-import React from 'react';
+import React, {Component, PropTypes} from 'react'
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +18,7 @@ import React from 'react';
  * specific language governing permissions and limitations
  * under the License.
  */
+
 (() => {
     console.log(React);
     var advertiseParams, app, getAdvertisingParams, initialize, isAdvertise, onErr, setAdvertisingParams, startAdvertise, stopAdvertise,
