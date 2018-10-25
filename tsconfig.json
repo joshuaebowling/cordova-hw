@@ -5,13 +5,15 @@
     "noEmitOnError": false,
     "removeComments": false,
     "sourceMap": true,
-    "target": "es5",
-    "module" : "none"
+    "target": "es2015",
+    "module" : "commonjs"
   },
   "include": [
-    "./ts/**/*"
+    "./www/ts/**/*",
+    "./www/ts/services/bluetooth.d.ts",
+    "./www/js/services/bluetooth.ts",
+    "./www/js/index.ts"
   ],
   "exclude": [
-    "node_modules",
   ]
 }

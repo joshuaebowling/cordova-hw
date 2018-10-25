@@ -1,31 +1,43 @@
-const $ = require('jquery');
-import React, {Component, PropTypes} from 'react'
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+/// <reference path="../ts/services/services.d.ts" />
 
+const $ = require('jquery');
+import * as bluetoothService from "js/services/bluetooth";
+import React, {Component, PropTypes} from 'react'
+
+
+var InitPeriparams: Params.initService = {
+    service: "1234",
+    characteristics: [
+    {
+        uuid: "ABCD",
+        permissions: {
+        read: true,
+        write: true,
+        //readEncryptionRequired: true,
+        //writeEncryptionRequired: true,
+        },
+        properties : {
+        read: true,
+        writeWithoutResponse: true,
+        write: true,
+        notify: true,
+        indicate: true,
+        //authenticatedSignedWrites: true,
+        //notifyEncryptionRequired: true,
+        //indicateEncryptionRequired: true,
+        }
+    }
+    ]
+};
+
+
+const 
 (() => {
-    console.log(React);
     var advertiseParams, app, getAdvertisingParams, initialize, isAdvertise, onErr, setAdvertisingParams, startAdvertise, stopAdvertise,
         $advertiseInfo
     ;
         //"services":["45745c60-7b1a-11e8-9c9c-2d42b21b1a3"], //iOS
-    advertiseParams = {
+    advertiseParams: Params.advertising = {
         "service":"45745c60-7b1a-11e8-9c9c",
         "name":"a"
     };
@@ -33,57 +45,40 @@ import React, {Component, PropTypes} from 'react'
     onErr = (err) => {
         alert(JSON.stringify(err))
     };
-
-    initialize = () => {
-        var parms = {
-            "request": true,
-            "restoreKey" : "bluetoothlepluginPeripheral"
-        };
-        return new Promise((resolve, reject) =>{ 
-            bluetoothle.initialize(() => {
-                bluetoothle.initializePeripheral((result) => {
-                    var params = {
-                        service: "1234",
-                        characteristics: [
-                        {
-                            uuid: "ABCD",
-                            permissions: {
-                            read: true,
-                            write: true,
-                            //readEncryptionRequired: true,
-                            //writeEncryptionRequired: true,
-                            },
-                            properties : {
-                            read: true,
-                            writeWithoutResponse: true,
-                            write: true,
-                            notify: true,
-                            indicate: true,
-                            //authenticatedSignedWrites: true,
-                            //notifyEncryptionRequired: true,
-                            //indicateEncryptionRequired: true,
-                            }
-                        }
-                        ]
-                    };
-                    bluetoothle.addService((result) => {
-                        resolve();
-                    }, (err) => {reject(err); onErr(err);} , params);
-                }, onErr, parms);
-            });
-        });
+    var periphParms: Params.peripheral = {
+        "request": true,
+        "restoreKey" : "bluetoothlepluginPeripheral"
     };
+    var serviceParams: Params.initService = {
+        service: "1234",
+        characteristics: [
+        {
+            uuid: "ABCD",
+            permissions: {
+            read: true,
+            write: true,
+            //readEncryptionRequired: true,
+            //writeEncryptionRequired: true,
+            },
+            properties : {
+            read: true,
+            writeWithoutResponse: true,
+            write: true,
+            notify: true,
+            indicate: true,
+            //authenticatedSignedWrites: true,
+            //notifyEncryptionRequired: true,
+            //indicateEncryptionRequired: true,
+            }
+        }
+        ]
+    };
+
     startAdvertise = () => {
-        return new Promise((resolve, reject) => {
-            initialize().then(() => {
-                stopAdvertise().then(() => {
-                    bluetoothle.startAdvertising(d => { 
-                        resolve();
-                        alert('advertising started');
-                    }, d => { alert('advertising failed'); onErr(d); reject(); }, getAdvertisingParams());
-                });
+        bluetoothService.advertise(serviceParams, advertiseParams, periphParms)
+            .then((results) => {
+
             });
-        });
     };
     stopAdvertise = () => {
         return new Promise((resolve, reject) => {
