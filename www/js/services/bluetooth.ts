@@ -1,11 +1,20 @@
 // bluetoothle is a global var created/set by cordova
 /// <reference path="../../ts/services/services.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+var advertisementParams:Params.advertising, app, getAdvertisingParams, initialize, isAdvertise, onErr, setAdvertisingParams, startAdvertise, stopAdvertise,
+$advertiseInfo
+;
+
+
+
 export default class BluetoothService implements Services.BluetoothService {
     constructor(bluetoothle: BluetoothlePlugin.Bluetoothle) {
         this.bluetoothle = bluetoothle;
         this.initializePeripheral = this.initializePeripheral.bind(this);
         this.initialize = this.initialize.bind(this);
+        this.addService = this.addService.bind(this);
+        this.isAdvertising = this.isAdvertising.bind(this);
+        this.startAdvertising = this.startAdvertising.bind(this);
     }
     bluetoothle: BluetoothlePlugin.Bluetoothle
     initialize() {
@@ -46,29 +55,37 @@ export default class BluetoothService implements Services.BluetoothService {
         });
     }
     advertise(params: any) {
-        console.log('advertise');
+        console.log('advertise', params);
         const self:any = this;
-        const {service, peripheral, advertisement} = params;
+        const {serviceParams, peripheralParams, advertisementParams} = params;
+        console.log(params);
         var advertiseResult: any = {intialize: {}, service: {}, peripheral: {}, advertise: {}};
         return new Promise((resolve, reject) => {
             self.initialize()
-            .then((result: any) => { alert(JSON.stringify(result)); advertiseResult.initialize = result; self.initializePeripheral(peripheral); })
-            .then((result: any) => {
-                    alert(JSON.stringify(result));
-                    advertiseResult.peripheral = result;
-                    self.addService(service);
-                })
-                .then((result: any) => { alert(JSON.stringify(result)); advertiseResult.peripherial = result; self.startAdvertising(advertisement); })
-                .then((result:any) => {
-                    alert(JSON.stringify(result));
-                    advertiseResult.advertise = result;
-                    if( "advertisingStarted" === "advertisingStarted") {
-                        resolve(advertiseResult);
-                    } else {
-                        reject(advertiseResult);
-                    }
-                })
-            ;
+                .then(() => self.initializePeripheral(peripheralParams))
+                .then(() => self.addService(serviceParams))
+                .then(() => self.startAdvertising(advertisementParams)
+                .then(r => alert(JSON.stringify(r))
+                .catch((e) => onErr(e))
+
+            // self.initialize()
+            // .then((result: any) => { alert(JSON.stringify(result)); advertiseResult.initialize = result; self.initializePeripheral(peripheralParams); })
+            // .then((result: any) => {
+            //         alert(JSON.stringify(result));
+            //         advertiseResult.peripheral = result;
+            //         self.addService(serviceParams);
+            //     })
+            //     .then((result: any) => { alert(JSON.stringify(result)); advertiseResult.peripherial = result; self.startAdvertising(advertisementParams); })
+            //     .then((result:any) => {
+            //         alert(JSON.stringify(result));
+            //         advertiseResult.advertise = result;
+            //         if( "advertisingStarted" === "advertisingStarted") {
+            //             resolve(advertiseResult);
+            //         } else {
+            //             reject(advertiseResult);
+            //         }
+            //     })
+            // ;
         });
     }
 }

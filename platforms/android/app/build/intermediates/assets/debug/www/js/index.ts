@@ -4,7 +4,7 @@ const $ = require('jquery');
 import BluetoothService from "./services/bluetooth";
 import React, {Component, PropTypes} from 'react'
 var bluetoothService: any;
-var InitPeriparams: Params.initService = {
+var peripheralParams: Params.initService = {
     service: "1234",
     characteristics: [
     {
@@ -36,7 +36,7 @@ var InitPeriparams: Params.initService = {
     advertisementParams = {
         "services":["1234"], //iOS
         "service":"1234",
-        "name":"a"
+        name:"my"
         mode: "balanced",
         connectable: true,
         timeout: 20000,
@@ -76,11 +76,15 @@ var InitPeriparams: Params.initService = {
     };
 
     startAdvertise = () => {
-        bluetoothService.advertise({serviceParams, advertisementParams, peripheralParams})
-            .then((results) => {
-                alert(JSON.stringify(results))
-            })
-            .catch(e => JSON.stringify(e))
+        bluetoothService.advertise({serviceParams, peripheralParams, advertisementParams})
+        .then((r) => onErr(r))
+        .catch(e => onErr(e))
+        // bluetoothService.initialize()
+        //     .then(() => bluetoothService.initializePeripheral(peripheralParams))
+        //     .then(() => bluetoothService.addService(serviceParams))
+        //     .then(() => bluetoothService.startAdvertising(advertisementParams)
+        //     .then(r => alert(JSON.stringify(r))
+        //     .catch((e) => onErr(e))
     };
     stopAdvertise = () => {
         return new Promise((resolve, reject) => {
@@ -124,13 +128,7 @@ var InitPeriparams: Params.initService = {
             $advertiseInfo = $('#advertising-info');
             $advertiseInfo.val(JSON.stringify(advertisementParams));
             $('#start-advertising').on('click',() => {
-                // startAdvertise();
-                bluetoothService.initialize()
-                    .then(() => bluetoothService.initializePeripheral(InitPeriparams))
-                    .then(() => bluetoothService.addService(serviceParams))
-                    .then(() => bluetoothService.startAdvertising(advertisementParams)
-                    .then(r => alert(JSON.stringify(r))
-                    .catch((e) => onErr(e))
+                startAdvertise();
             });
             $('#stop-advertising').on('click',() => {
                 stopAdvertise();
@@ -139,7 +137,7 @@ var InitPeriparams: Params.initService = {
                 isAdvertise()
                  .then((result) => {
                         alert(`is advertising = ${JSON.stringify(result)}`)
-                    })
+                });
             });
             document.removeEventListener('deviceready', this.onDeviceReady.bind(this), false);
 
