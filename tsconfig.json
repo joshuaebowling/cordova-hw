@@ -5,8 +5,12 @@
     "noEmitOnError": false,
     "removeComments": false,
     "sourceMap": true,
-    "target": "es2015",
-    "module" : "commonjs"
+    "target": "es6",
+    "module" : "commonjs",
+    "moduleResolution": "node",
+    "noResolve": false,
+    "allowJs": true,
+    "jsx":"react"
   },
   "include": [
     "./www/ts/**/*",
@@ -15,5 +19,6 @@
     "./www/js/index.ts"
   ],
   "exclude": [
+    "./node_modules/**/*"
   ]
 }

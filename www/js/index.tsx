@@ -6,10 +6,6 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import App from './components/app';
 
-ReactDom.render(
-  <App />,
-  document.getElementById('wrapperContainer')
-)
 var bluetoothService: any;
 var peripheralParams: Params.initService = {
     service: "1234",
@@ -82,37 +78,37 @@ var peripheralParams: Params.initService = {
         ]
     };
 
-    startAdvertise = () => {
-        bluetoothService.advertise({serviceParams, peripheralParams, advertisementParams})
-        .then((r) => onErr(r))
-        .catch(e => onErr(e))
-    };
-    stopAdvertise = () => {
-        return new Promise((resolve, reject) => {
-            bluetoothle.stopAdvertising(() => {
-                resolve();
-                alert('advertising stopped');
-            }, () => {});
-        });
-    };
-    isAdvertise = () => {
-        return new Promise((resolve, reject) => {
-            bluetoothle.isAdvertising((result) => {
-                try {
-                    resolve(result);
-                    onErr(result);    
-                } catch {
-                    reject();
-                }
-            }, () => {});
-        });
-    };
-    setAdvertisingParams = (val) => {
-        advertisementParams = JSON.parse($advertiseInfo.val());
-    };
-    getAdvertisingParams = () => {
-        return JSON.parse($advertiseInfo.val());
-    };
+    // startAdvertise = () => {
+    //     bluetoothService.advertise({serviceParams, peripheralParams, advertisementParams})
+    //     .then((r) => onErr(r))
+    //     .catch(e => onErr(e))
+    // };
+    // stopAdvertise = () => {
+    //     return new Promise((resolve, reject) => {
+    //         bluetoothle.stopAdvertising(() => {
+    //             resolve();
+    //             alert('advertising stopped');
+    //         }, () => {});
+    //     });
+    // };
+    // isAdvertise = () => {
+    //     return new Promise((resolve, reject) => {
+    //         bluetoothle.isAdvertising((result) => {
+    //             try {
+    //                 resolve(result);
+    //                 onErr(result);    
+    //             } catch {
+    //                 reject();
+    //             }
+    //         }, () => {});
+    //     });
+    // };
+    // setAdvertisingParams = (val) => {
+    //     advertisementParams = JSON.parse($advertiseInfo.val());
+    // };
+    // getAdvertisingParams = () => {
+    //     return JSON.parse($advertiseInfo.val());
+    // };
     var app: any = {
         // Application Constructor
         initialize: function() {
@@ -126,34 +122,25 @@ var peripheralParams: Params.initService = {
         onDeviceReady: function() {
             bluetoothService = new BluetoothService(bluetoothle);
             this.receivedEvent('deviceready');
-            $advertiseInfo = $('#advertising-info');
-            $advertiseInfo.val(JSON.stringify(advertisementParams));
-            $('#start-advertising').on('click',() => {
-                startAdvertise();
-            });
-            $('#stop-advertising').on('click',() => {
-                stopAdvertise();
-            });
-            $('#is-advertising').on('click', () => {
-                isAdvertise()
-                 .then((result) => {
-                        alert(`is advertising = ${JSON.stringify(result)}`)
-                });
-            });
+            ReactDom.render(
+                <App />,
+                document.getElementById('wrapperContainer')
+              )
+              
             document.removeEventListener('deviceready', this.onDeviceReady.bind(this), false);
 
         },
 
         // Update DOM on a Received Event
         receivedEvent: function(id) {
-            var parentElement = document.getElementById(id);
-            var listeningElement = parentElement.querySelector('.listening');
-            var receivedElement = parentElement.querySelector('.received');
+            // var parentElement = document.getElementById(id);
+            // var listeningElement = parentElement.querySelector('.listening');
+            // var receivedElement = parentElement.querySelector('.received');
 
-            listeningElement.setAttribute('style', 'display:none;');
-            receivedElement.setAttribute('style', 'display:block;');
+            // listeningElement.setAttribute('style', 'display:none;');
+            // receivedElement.setAttribute('style', 'display:block;');
 
-            console.log('Received Event: ' + id);
+            // console.log('Received Event: ' + id);
         }
     };
 
