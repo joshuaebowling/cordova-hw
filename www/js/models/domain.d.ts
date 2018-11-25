@@ -1,0 +1,3 @@
+interface IDomain {
+  id: number
+}
