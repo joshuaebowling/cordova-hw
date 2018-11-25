@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Router, Route, IndexRoute} from 'react-router';
+import { Router, Route } from 'react-router';
+import { Link } from 'react-router-dom';
 import ConnectView from './views/connect';
-import {getPath} from '../services/window';
+import DevicesView from './views/devices';
 import createHistory from 'history/createMemoryHistory';
+import {UserAgentProvider} from '@quentin-sommer/react-useragent'
 
 const RootContext = React.createContext({});
-const loc = getPath();
 const history = createHistory();
 
 export default class App extends Component {
@@ -15,11 +16,18 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <Router history={history} >
-          <Route path={loc}>
-            <Route component={ConnectView} path="/" pageName="Connect" pageDescription="Connect A Locator" />
-          </Route>
-        </Router>
+        <UserAgentProvider ua="firefox">
+          <Router history={history} >
+            <div>
+              <nav>
+                  <Link to="/">Locators</Link>
+                  <Link to="/Connect">Connect a Locator</Link>
+              </nav>
+              <Route component={ConnectView} path="/Connect" pageName="Connect" pageDescription="Connect A Locator" />
+              <Route component={DevicesView} exact path="/" pageName="Locators" pageDescription="Locators" />
+            </div>
+          </Router>
+        </UserAgentProvider>
       </div>
     );
   }

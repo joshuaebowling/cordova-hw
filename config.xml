@@ -24,6 +24,7 @@
     </platform>
     <plugin name="cordova-plugin-bluetoothle" spec="^4.4.4" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
+    <preference name="OverrideUserAgent" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0" />
     <engine name="android" spec="^7.1.1" />
     <engine name="browser" spec="5.0.4" />
 </widget>
