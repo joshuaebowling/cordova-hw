@@ -14,20 +14,24 @@
         "bluetooth-scanner": "^1.0.1",
         "cordova-android": "^7.1.1",
         "cordova-browser": "5.0.4",
+        "cordova-plugin-bluetooth-serial": "^0.4.7",
         "cordova-plugin-bluetoothle": "^4.4.4",
         "cordova-plugin-whitelist": "1",
         "device": "0.3.9",
+        "history": "^4.9.0",
         "jquery": "^3.3.1",
         "lodash": "^4.17.11",
-        "react": "^0.14.0 || ^15.0.0-0 || ^15.4.0-0 || ^16.0.0-0",
-        "react-dom": "^0.14.0 || ^15.0.0-0 || ^15.4.0-0 || ^16.0.0-0",
+        "react": "^16.8.4",
+        "react-dom": "^16.8.4",
         "react-router": "^4.3.1",
+        "react-router-dom": "^4.4.0",
         "redux-notifications": "^4.0.1"
     },
     "cordova": {
         "plugins": {
             "cordova-plugin-bluetoothle": {},
-            "cordova-plugin-whitelist": {}
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-bluetooth-serial": {}
         },
         "platforms": [
             "android",
@@ -35,6 +39,7 @@
         ]
     },
     "devDependencies": {
+        "eslint": "^5.15.2",
         "typescript": "^3.1.3"
     }
 }
