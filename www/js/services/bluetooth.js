@@ -1,10 +1,11 @@
+/// <reference path="../index.d.ts" />
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // bluetoothle is a global var created/set by cordova
 /// <reference path="../../ts/services/services.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 class BluetoothService {
-    constructor(bluetoothle) {
+    constructor(bluetoothle:BluetoothlePlugin.Bluetoothle, ) {
         this.bluetoothle = bluetoothle;
         this.initializePeripheral = this.initializePeripheral.bind(this);
         this.initialize = this.initialize.bind(this);
@@ -69,6 +70,9 @@ class BluetoothService {
                 }
             });
         });
+    }
+    discover() {
+
     }
 }
 exports.default = BluetoothService;
