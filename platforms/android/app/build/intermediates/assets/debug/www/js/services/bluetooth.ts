@@ -4,47 +4,7 @@
 var advertisementParams:Params.advertising, app, getAdvertisingParams, initialize, isAdvertise, onErr, setAdvertisingParams, startAdvertise, stopAdvertise,
 $advertiseInfo
 ;
-// advertisementParams = {
-// "services":["1234"], //iOS
-// "service":"1234",
-// name:"my"
-// mode: "balanced",
-// connectable: true,
-// timeout: 20000,
-// powerLevel: "high",
-// //        includeDeviceName: true
-// };
-// onErr = (err) => {
-// alert(JSON.stringify(err))
-// };
-// var peripheralParams: Params.peripheral = {
-// "request": true,
-// "restoreKey" : "bluetoothlepluginPeripheral"
-// };
-// var serviceParams: Params.initService = {
-// service: "1234",
-// characteristics: [
-// {
-//     uuid: "ABCD",
-//     permissions: {
-//     read: true,
-//     write: true,
-//     //readEncryptionRequired: true,
-//     //writeEncryptionRequired: true,
-//     },
-//     properties : {
-//     read: true,
-//     writeWithoutResponse: true,
-//     write: true,
-//     notify: true,
-//     indicate: true,
-//     //authenticatedSignedWrites: true,
-//     //notifyEncryptionRequired: true,
-//     //indicateEncryptionRequired: true,
-//     }
-// }
-// ]
-// };
+
 
 
 export default class BluetoothService implements Services.BluetoothService {

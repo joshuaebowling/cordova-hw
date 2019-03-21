@@ -2,7 +2,14 @@
 /// <reference path="../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 const $ = require('jquery');
 import BluetoothService from "./services/bluetooth";
-import React, {Component, PropTypes} from 'react'
+import React from 'react';
+import ReactDom from 'react-dom';
+import App from './components/app';
+
+ReactDom.render(
+  <App />,
+  document.getElementById('wrapperContainer')
+)
 var bluetoothService: any;
 var peripheralParams: Params.initService = {
     service: "1234",
@@ -41,7 +48,7 @@ var peripheralParams: Params.initService = {
         connectable: true,
         timeout: 20000,
         powerLevel: "high",
-//        includeDeviceName: true
+        includeDeviceName: true
     };
     onErr = (err) => {
         alert(JSON.stringify(err))
@@ -79,12 +86,6 @@ var peripheralParams: Params.initService = {
         bluetoothService.advertise({serviceParams, peripheralParams, advertisementParams})
         .then((r) => onErr(r))
         .catch(e => onErr(e))
-        // bluetoothService.initialize()
-        //     .then(() => bluetoothService.initializePeripheral(peripheralParams))
-        //     .then(() => bluetoothService.addService(serviceParams))
-        //     .then(() => bluetoothService.startAdvertising(advertisementParams)
-        //     .then(r => alert(JSON.stringify(r))
-        //     .catch((e) => onErr(e))
     };
     stopAdvertise = () => {
         return new Promise((resolve, reject) => {

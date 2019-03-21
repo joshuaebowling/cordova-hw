@@ -1,382 +1,334 @@
 // Platform: android
-// ???
-// browserify
+// 9e8e1b716252c4a08abcd31a13013b868d6f4141
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+     http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+*/
+;(function() {
 var PLATFORM_VERSION_BUILD_LABEL = '7.1.1';
-var define = {moduleMap: []};
-require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-require('cordova/init');
+// file: src/scripts/require.js
 
-},{"cordova/init":"cordova/init"}],"cordova-plugin-bluetooth-serial.bluetoothSerial":[function(require,module,exports){
-/*global cordova*/
-module.exports = {
+/* jshint -W079 */
+/* jshint -W020 */
 
-    connect: function (macAddress, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "connect", [macAddress]);
-    },
+var require;
+var define;
 
-    // Android only - see http://goo.gl/1mFjZY
-    connectInsecure: function (macAddress, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "connectInsecure", [macAddress]);
-    },
+(function () {
+    var modules = {};
+    // Stack of moduleIds currently being built.
+    var requireStack = [];
+    // Map of module ID -> index into requireStack of modules currently being built.
+    var inProgressModules = {};
+    var SEPARATOR = '.';
 
-    disconnect: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "disconnect", []);
-    },
+    function build (module) {
+        var factory = module.factory;
+        var localRequire = function (id) {
+            var resultantId = id;
+            // Its a relative path, so lop off the last portion and add the id (minus "./")
+            if (id.charAt(0) === '.') {
+                resultantId = module.id.slice(0, module.id.lastIndexOf(SEPARATOR)) + SEPARATOR + id.slice(2);
+            }
+            return require(resultantId);
+        };
+        module.exports = {};
+        delete module.factory;
+        factory(localRequire, module.exports, module);
+        return module.exports;
+    }
 
-    // list bound devices
-    list: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "list", []);
-    },
+    require = function (id) {
+        if (!modules[id]) {
+            throw 'module ' + id + ' not found';
+        } else if (id in inProgressModules) {
+            var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
+            throw 'Cycle in require graph: ' + cycle;
+        }
+        if (modules[id].factory) {
+            try {
+                inProgressModules[id] = requireStack.length;
+                requireStack.push(id);
+                return build(modules[id]);
+            } finally {
+                delete inProgressModules[id];
+                requireStack.pop();
+            }
+        }
+        return modules[id].exports;
+    };
 
-    isEnabled: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "isEnabled", []);
-    },
-
-    isConnected: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "isConnected", []);
-    },
-
-    // the number of bytes of data available to read is passed to the success function
-    available: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "available", []);
-    },
-
-    // read all the data in the buffer
-    read: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "read", []);
-    },
-
-    // reads the data in the buffer up to and including the delimiter
-    readUntil: function (delimiter, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "readUntil", [delimiter]);
-    },
-
-    // writes data to the bluetooth serial port
-    // data can be an ArrayBuffer, string, integer array, or Uint8Array
-    write: function (data, success, failure) {
-
-        // convert to ArrayBuffer
-        if (typeof data === 'string') {
-            data = stringToArrayBuffer(data);
-        } else if (data instanceof Array) {
-            // assuming array of interger
-            data = new Uint8Array(data).buffer;
-        } else if (data instanceof Uint8Array) {
-            data = data.buffer;
+    define = function (id, factory) {
+        if (modules[id]) {
+            throw 'module ' + id + ' already defined';
         }
 
-        cordova.exec(success, failure, "BluetoothSerial", "write", [data]);
-    },
-
-    // calls the success callback when new data is available
-    subscribe: function (delimiter, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "subscribe", [delimiter]);
-    },
-
-    // removes data subscription
-    unsubscribe: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "unsubscribe", []);
-    },
-
-    // calls the success callback when new data is available with an ArrayBuffer
-    subscribeRawData: function (success, failure) {
-
-        successWrapper = function(data) {
-            // Windows Phone flattens an array of one into a number which
-            // breaks the API. Stuff it back into an ArrayBuffer.
-            if (typeof data === 'number') {
-                var a = new Uint8Array(1);
-                a[0] = data;
-                data = a.buffer;
-            }
-            success(data);
+        modules[id] = {
+            id: id,
+            factory: factory
         };
-        cordova.exec(successWrapper, failure, "BluetoothSerial", "subscribeRaw", []);
-    },
+    };
 
-    // removes data subscription
-    unsubscribeRawData: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "unsubscribeRaw", []);
-    },
+    define.remove = function (id) {
+        delete modules[id];
+    };
 
-    // clears the data buffer
-    clear: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "clear", []);
-    },
+    define.moduleMap = modules;
+})();
 
-    // reads the RSSI of the *connected* peripherial
-    readRSSI: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "readRSSI", []);
-    },
-
-    showBluetoothSettings: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "showBluetoothSettings", []);
-    },
-
-    enable: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "enable", []);
-    },
-
-    discoverUnpaired: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "discoverUnpaired", []);
-    },
-
-    setDeviceDiscoveredListener: function (notify) {
-        if (typeof notify != 'function')
-            throw 'BluetoothSerial.setDeviceDiscoveredListener: Callback not a function';
-
-        cordova.exec(notify, null, "BluetoothSerial", "setDeviceDiscoveredListener", []);
-    },
-
-    clearDeviceDiscoveredListener: function () {
-        cordova.exec(null, null, "BluetoothSerial", "clearDeviceDiscoveredListener", []);
-    },
-
-    setName: function (newName) {
-        cordova.exec(null, null, "BluetoothSerial", "setName", [newName]);
-    },
-
-    setDiscoverable: function (discoverableDuration) {
-        cordova.exec(null, null, "BluetoothSerial", "setDiscoverable", [discoverableDuration]);
-    }
-
-
-};
-
-var stringToArrayBuffer = function(str) {
-    var ret = new Uint8Array(str.length);
-    for (var i = 0; i < str.length; i++) {
-        ret[i] = str.charCodeAt(i);
-    }
-    return ret.buffer;
-};
-
-},{}],"cordova-plugin-bluetoothle.BluetoothLe":[function(require,module,exports){
-var bluetoothleName = "BluetoothLePlugin";
-var bluetoothle = {
-  initialize: function(successCallback, params) {
-    cordova.exec(successCallback, successCallback, bluetoothleName, "initialize", [params]);
-  },
-  enable: function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "enable", []);
-  },
-  disable: function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "disable", []);
-  },
-  getAdapterInfo: function(successCallback) {
-    cordova.exec(successCallback, successCallback, bluetoothleName, "getAdapterInfo", []);
-  },  
-  startScan: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "startScan", [params]);
-  },
-  stopScan: function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "stopScan", []);
-  },
-  retrieveConnected: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "retrieveConnected", [params]);
-  },
-  bond: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "bond", [params]);
-  },
-  unbond: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "unbond", [params]);
-  },
-  connect: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "connect", [params]);
-  },
-  reconnect: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "reconnect", [params]);
-  },
-  disconnect: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "disconnect", [params]);
-  },
-  close: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "close", [params]);
-  },
-  discover: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "discover", [params]);
-  },
-  services: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "services", [params]);
-  },
-  characteristics: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "characteristics", [params]);
-  },
-  descriptors: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "descriptors", [params]);
-  },
-  read: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "read", [params]);
-  },
-  subscribe: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "subscribe", [params]);
-  },
-  unsubscribe: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "unsubscribe", [params]);
-  },
-  write: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "write", [params]);
-  },
-  writeQ: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "writeQ", [params]);
-  },
-  readDescriptor: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "readDescriptor", [params]);
-  },
-  writeDescriptor: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "writeDescriptor", [params]);
-  },
-  rssi: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "rssi", [params]);
-  },
-  mtu: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "mtu", [params]);
-  },
-  requestConnectionPriority: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "requestConnectionPriority", [params]);
-  },
-  isInitialized: function(successCallback) {
-    cordova.exec(successCallback, successCallback, bluetoothleName, "isInitialized", []);
-  },
-  isEnabled: function(successCallback) {
-    cordova.exec(successCallback, successCallback, bluetoothleName, "isEnabled", []);
-  },
-  isScanning: function(successCallback) {
-    cordova.exec(successCallback, successCallback, bluetoothleName, "isScanning", []);
-  },
-  isBonded: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "isBonded", [params]);
-  },
-  wasConnected: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "wasConnected", [params]);
-  },
-  isConnected: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "isConnected", [params]);
-  },
-  isDiscovered: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "isDiscovered", [params]);
-  },
-  hasPermission: function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "hasPermission", []);
-  },
-  requestPermission: function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "requestPermission", []);
-  },
-  isLocationEnabled: function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "isLocationEnabled", []);
-  },
-  requestLocation: function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "requestLocation", []);
-  },
-  initializePeripheral: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "initializePeripheral", [params]);
-  },
-  addService: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "addService", [params]);
-  },
-  removeService: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "removeService", [params]);
-  },
-  removeAllServices: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "removeAllServices", [params]);
-  },
-  startAdvertising: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "startAdvertising", [params]);
-  },
-  stopAdvertising: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "stopAdvertising", [params]);
-  },
-  isAdvertising: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "isAdvertising", []);
-  },
-  respond: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "respond", [params]);
-  },
-  notify: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "notify", [params]);
-  },
-  encodedStringToBytes: function(string) {
-    var data = atob(string);
-    var bytes = new Uint8Array(data.length);
-    for (var i = 0; i < bytes.length; i++)
-    {
-      bytes[i] = data.charCodeAt(i);
-    }
-    return bytes;
-  },
-  bytesToEncodedString: function(bytes) {
-    return btoa(String.fromCharCode.apply(null, bytes));
-  },
-  stringToBytes: function(string) {
-    var bytes = new ArrayBuffer(string.length * 2);
-    var bytesUint16 = new Uint16Array(bytes);
-    for (var i = 0; i < string.length; i++) {
-      bytesUint16[i] = string.charCodeAt(i);
-    }
-    return new Uint8Array(bytesUint16);
-  },
-  bytesToString: function(bytes) {
-    return String.fromCharCode.apply(null, new Uint16Array(bytes));
-  },
-  bytesToHex: function(bytes) {
-    var string = [];
-    for (var i = 0; i < bytes.length; i++) {
-      string.push("0x" + ("0"+(bytes[i].toString(16))).substr(-2).toUpperCase());
-    }
-    return string.join(" ");
-  },
-  SCAN_MODE_OPPORTUNISTIC: -1,
-  SCAN_MODE_LOW_POWER: 0,
-  SCAN_MODE_BALANCED: 1,
-  SCAN_MODE_LOW_LATENCY: 2,
-  MATCH_NUM_ONE_ADVERTISEMENT: 1,
-  MATCH_NUM_FEW_ADVERTISEMENT: 2,
-  MATCH_NUM_MAX_ADVERTISEMENT: 3,
-  MATCH_MODE_AGGRESSIVE: 1,
-  MATCH_MODE_STICKY: 2,
-  CALLBACK_TYPE_ALL_MATCHES: 1,
-  CALLBACK_TYPE_FIRST_MATCH: 2,
-  CALLBACK_TYPE_MATCH_LOST: 4,
+// Export for use in node
+if (typeof module === 'object' && typeof require === 'function') {
+    module.exports.require = require;
+    module.exports.define = define;
 }
-module.exports = bluetoothle;
 
-},{}],"cordova/android/nativeapiprovider":[function(require,module,exports){
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
-*/
+// file: src/cordova.js
+define("cordova", function(require, exports, module) {
+
+// Workaround for Windows 10 in hosted environment case
+// http://www.w3.org/html/wg/drafts/html/master/browsers.html#named-access-on-the-window-object
+if (window.cordova && !(window.cordova instanceof HTMLElement)) { // eslint-disable-line no-undef
+    throw new Error('cordova already defined');
+}
+
+var channel = require('cordova/channel');
+var platform = require('cordova/platform');
+
+/**
+ * Intercept calls to addEventListener + removeEventListener and handle deviceready,
+ * resume, and pause events.
+ */
+var m_document_addEventListener = document.addEventListener;
+var m_document_removeEventListener = document.removeEventListener;
+var m_window_addEventListener = window.addEventListener;
+var m_window_removeEventListener = window.removeEventListener;
+
+/**
+ * Houses custom event handlers to intercept on document + window event listeners.
+ */
+var documentEventHandlers = {};
+var windowEventHandlers = {};
+
+document.addEventListener = function (evt, handler, capture) {
+    var e = evt.toLowerCase();
+    if (typeof documentEventHandlers[e] !== 'undefined') {
+        documentEventHandlers[e].subscribe(handler);
+    } else {
+        m_document_addEventListener.call(document, evt, handler, capture);
+    }
+};
+
+window.addEventListener = function (evt, handler, capture) {
+    var e = evt.toLowerCase();
+    if (typeof windowEventHandlers[e] !== 'undefined') {
+        windowEventHandlers[e].subscribe(handler);
+    } else {
+        m_window_addEventListener.call(window, evt, handler, capture);
+    }
+};
+
+document.removeEventListener = function (evt, handler, capture) {
+    var e = evt.toLowerCase();
+    // If unsubscribing from an event that is handled by a plugin
+    if (typeof documentEventHandlers[e] !== 'undefined') {
+        documentEventHandlers[e].unsubscribe(handler);
+    } else {
+        m_document_removeEventListener.call(document, evt, handler, capture);
+    }
+};
+
+window.removeEventListener = function (evt, handler, capture) {
+    var e = evt.toLowerCase();
+    // If unsubscribing from an event that is handled by a plugin
+    if (typeof windowEventHandlers[e] !== 'undefined') {
+        windowEventHandlers[e].unsubscribe(handler);
+    } else {
+        m_window_removeEventListener.call(window, evt, handler, capture);
+    }
+};
+
+function createEvent (type, data) {
+    var event = document.createEvent('Events');
+    event.initEvent(type, false, false);
+    if (data) {
+        for (var i in data) {
+            if (data.hasOwnProperty(i)) {
+                event[i] = data[i];
+            }
+        }
+    }
+    return event;
+}
+
+/* eslint-disable no-undef */
+var cordova = {
+    define: define,
+    require: require,
+    version: PLATFORM_VERSION_BUILD_LABEL,
+    platformVersion: PLATFORM_VERSION_BUILD_LABEL,
+    platformId: platform.id,
+
+    /* eslint-enable no-undef */
+
+    /**
+     * Methods to add/remove your own addEventListener hijacking on document + window.
+     */
+    addWindowEventHandler: function (event) {
+        return (windowEventHandlers[event] = channel.create(event));
+    },
+    addStickyDocumentEventHandler: function (event) {
+        return (documentEventHandlers[event] = channel.createSticky(event));
+    },
+    addDocumentEventHandler: function (event) {
+        return (documentEventHandlers[event] = channel.create(event));
+    },
+    removeWindowEventHandler: function (event) {
+        delete windowEventHandlers[event];
+    },
+    removeDocumentEventHandler: function (event) {
+        delete documentEventHandlers[event];
+    },
+    /**
+     * Retrieve original event handlers that were replaced by Cordova
+     *
+     * @return object
+     */
+    getOriginalHandlers: function () {
+        return {'document': {'addEventListener': m_document_addEventListener, 'removeEventListener': m_document_removeEventListener},
+            'window': {'addEventListener': m_window_addEventListener, 'removeEventListener': m_window_removeEventListener}};
+    },
+    /**
+     * Method to fire event from native code
+     * bNoDetach is required for events which cause an exception which needs to be caught in native code
+     */
+    fireDocumentEvent: function (type, data, bNoDetach) {
+        var evt = createEvent(type, data);
+        if (typeof documentEventHandlers[type] !== 'undefined') {
+            if (bNoDetach) {
+                documentEventHandlers[type].fire(evt);
+            } else {
+                setTimeout(function () {
+                    // Fire deviceready on listeners that were registered before cordova.js was loaded.
+                    if (type === 'deviceready') {
+                        document.dispatchEvent(evt);
+                    }
+                    documentEventHandlers[type].fire(evt);
+                }, 0);
+            }
+        } else {
+            document.dispatchEvent(evt);
+        }
+    },
+    fireWindowEvent: function (type, data) {
+        var evt = createEvent(type, data);
+        if (typeof windowEventHandlers[type] !== 'undefined') {
+            setTimeout(function () {
+                windowEventHandlers[type].fire(evt);
+            }, 0);
+        } else {
+            window.dispatchEvent(evt);
+        }
+    },
+
+    /**
+     * Plugin callback mechanism.
+     */
+    // Randomize the starting callbackId to avoid collisions after refreshing or navigating.
+    // This way, it's very unlikely that any new callback would get the same callbackId as an old callback.
+    callbackId: Math.floor(Math.random() * 2000000000),
+    callbacks: {},
+    callbackStatus: {
+        NO_RESULT: 0,
+        OK: 1,
+        CLASS_NOT_FOUND_EXCEPTION: 2,
+        ILLEGAL_ACCESS_EXCEPTION: 3,
+        INSTANTIATION_EXCEPTION: 4,
+        MALFORMED_URL_EXCEPTION: 5,
+        IO_EXCEPTION: 6,
+        INVALID_ACTION: 7,
+        JSON_EXCEPTION: 8,
+        ERROR: 9
+    },
+
+    /**
+     * Called by native code when returning successful result from an action.
+     */
+    callbackSuccess: function (callbackId, args) {
+        cordova.callbackFromNative(callbackId, true, args.status, [args.message], args.keepCallback);
+    },
+
+    /**
+     * Called by native code when returning error result from an action.
+     */
+    callbackError: function (callbackId, args) {
+        // TODO: Deprecate callbackSuccess and callbackError in favour of callbackFromNative.
+        // Derive success from status.
+        cordova.callbackFromNative(callbackId, false, args.status, [args.message], args.keepCallback);
+    },
+
+    /**
+     * Called by native code when returning the result from an action.
+     */
+    callbackFromNative: function (callbackId, isSuccess, status, args, keepCallback) {
+        try {
+            var callback = cordova.callbacks[callbackId];
+            if (callback) {
+                if (isSuccess && status === cordova.callbackStatus.OK) {
+                    callback.success && callback.success.apply(null, args);
+                } else if (!isSuccess) {
+                    callback.fail && callback.fail.apply(null, args);
+                }
+                /*
+                else
+                    Note, this case is intentionally not caught.
+                    this can happen if isSuccess is true, but callbackStatus is NO_RESULT
+                    which is used to remove a callback from the list without calling the callbacks
+                    typically keepCallback is false in this case
+                */
+                // Clear callback if not expecting any more results
+                if (!keepCallback) {
+                    delete cordova.callbacks[callbackId];
+                }
+            }
+        } catch (err) {
+            var msg = 'Error in ' + (isSuccess ? 'Success' : 'Error') + ' callbackId: ' + callbackId + ' : ' + err;
+            console && console.log && console.log(msg);
+            console && console.log && err.stack && console.log(err.stack);
+            cordova.fireWindowEvent('cordovacallbackerror', { 'message': msg });
+            throw err;
+        }
+    },
+    addConstructor: function (func) {
+        channel.onCordovaReady.subscribe(function () {
+            try {
+                func();
+            } catch (e) {
+                console.log('Failed to run constructor: ' + e);
+            }
+        });
+    }
+};
+
+module.exports = cordova;
+
+});
+
+// file: /Users/brodybits/Documents/cordova/cordova-android/cordova-js-src/android/nativeapiprovider.js
+define("cordova/android/nativeapiprovider", function(require, exports, module) {
 
 /**
  * Exports the ExposedJsApi.java object if available, otherwise exports the PromptBasedNativeApi.
@@ -396,25 +348,10 @@ module.exports = {
     }
 };
 
-},{"cordova/android/promptbasednativeapi":"cordova/android/promptbasednativeapi"}],"cordova/android/promptbasednativeapi":[function(require,module,exports){
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
-*/
+});
+
+// file: /Users/brodybits/Documents/cordova/cordova-android/cordova-js-src/android/promptbasednativeapi.js
+define("cordova/android/promptbasednativeapi", function(require, exports, module) {
 
 /**
  * Implements the API of ExposedJsApi.java, but uses prompt() to communicate.
@@ -433,27 +370,10 @@ module.exports = {
     }
 };
 
-},{}],"cordova/argscheck":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/argscheck.js
+define("cordova/argscheck", function(require, exports, module) {
 
 var utils = require('cordova/utils');
 
@@ -514,27 +434,10 @@ moduleExports.checkArgs = checkArgs;
 moduleExports.getValue = getValue;
 moduleExports.enableChecks = true;
 
-},{"cordova/utils":"cordova/utils"}],"cordova/base64":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/base64.js
+define("cordova/base64", function(require, exports, module) {
 
 var base64 = exports;
 
@@ -597,27 +500,10 @@ function uint8ToBase64 (rawData) {
     return output;
 }
 
-},{}],"cordova/builder":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/builder.js
+define("cordova/builder", function(require, exports, module) {
 
 var utils = require('cordova/utils');
 
@@ -732,27 +618,10 @@ exports.recursiveMerge = recursiveMerge;
 exports.assignOrWrapInDeprecateGetter = assignOrWrapInDeprecateGetter;
 exports.replaceHookForTesting = function () {};
 
-},{"cordova/utils":"cordova/utils"}],"cordova/channel":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/channel.js
+define("cordova/channel", function(require, exports, module) {
 
 var utils = require('cordova/utils');
 var nextGuid = 1;
@@ -1011,74 +880,10 @@ channel.waitForInitialization('onDOMContentLoaded');
 
 module.exports = channel;
 
-},{"cordova/utils":"cordova/utils"}],"cordova/exec/proxy":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
 
-// internal map of proxy function
-var CommandProxyMap = {};
-
-module.exports = {
-
-    // example: cordova.commandProxy.add("Accelerometer",{getCurrentAcceleration: function(successCallback, errorCallback, options) {...},...);
-    add: function (id, proxyObj) {
-        console.log('adding proxy for ' + id);
-        CommandProxyMap[id] = proxyObj;
-        return proxyObj;
-    },
-
-    // cordova.commandProxy.remove("Accelerometer");
-    remove: function (id) {
-        var proxy = CommandProxyMap[id];
-        delete CommandProxyMap[id];
-        CommandProxyMap[id] = null;
-        return proxy;
-    },
-
-    get: function (service, action) {
-        return (CommandProxyMap[service] ? CommandProxyMap[service][action] : null);
-    }
-};
-
-},{}],"cordova/exec":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+// file: /Users/brodybits/Documents/cordova/cordova-android/cordova-js-src/exec.js
+define("cordova/exec", function(require, exports, module) {
 
 /**
  * Execute a cordova command.  It is up to the native side whether this action
@@ -1357,27 +1162,166 @@ function popMessageFromQueue() {
 
 module.exports = androidExec;
 
-},{"cordova":"cordova","cordova/android/nativeapiprovider":"cordova/android/nativeapiprovider","cordova/base64":"cordova/base64","cordova/channel":"cordova/channel","cordova/utils":"cordova/utils"}],"cordova/init":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/exec/proxy.js
+define("cordova/exec/proxy", function(require, exports, module) {
+
+// internal map of proxy function
+var CommandProxyMap = {};
+
+module.exports = {
+
+    // example: cordova.commandProxy.add("Accelerometer",{getCurrentAcceleration: function(successCallback, errorCallback, options) {...},...);
+    add: function (id, proxyObj) {
+        console.log('adding proxy for ' + id);
+        CommandProxyMap[id] = proxyObj;
+        return proxyObj;
+    },
+
+    // cordova.commandProxy.remove("Accelerometer");
+    remove: function (id) {
+        var proxy = CommandProxyMap[id];
+        delete CommandProxyMap[id];
+        CommandProxyMap[id] = null;
+        return proxy;
+    },
+
+    get: function (service, action) {
+        return (CommandProxyMap[service] ? CommandProxyMap[service][action] : null);
+    }
+};
+
+});
+
+// file: src/common/init.js
+define("cordova/init", function(require, exports, module) {
+
+var channel = require('cordova/channel');
+var cordova = require('cordova');
+var modulemapper = require('cordova/modulemapper');
+var platform = require('cordova/platform');
+var pluginloader = require('cordova/pluginloader');
+var utils = require('cordova/utils');
+
+var platformInitChannelsArray = [channel.onNativeReady, channel.onPluginsReady];
+
+function logUnfiredChannels (arr) {
+    for (var i = 0; i < arr.length; ++i) {
+        if (arr[i].state !== 2) {
+            console.log('Channel not fired: ' + arr[i].type);
+        }
+    }
+}
+
+window.setTimeout(function () {
+    if (channel.onDeviceReady.state !== 2) {
+        console.log('deviceready has not fired after 5 seconds.');
+        logUnfiredChannels(platformInitChannelsArray);
+        logUnfiredChannels(channel.deviceReadyChannelsArray);
+    }
+}, 5000);
+
+// Replace navigator before any modules are required(), to ensure it happens as soon as possible.
+// We replace it so that properties that can't be clobbered can instead be overridden.
+function replaceNavigator (origNavigator) {
+    var CordovaNavigator = function () {};
+    CordovaNavigator.prototype = origNavigator;
+    var newNavigator = new CordovaNavigator();
+    // This work-around really only applies to new APIs that are newer than Function.bind.
+    // Without it, APIs such as getGamepads() break.
+    if (CordovaNavigator.bind) {
+        for (var key in origNavigator) {
+            if (typeof origNavigator[key] === 'function') {
+                newNavigator[key] = origNavigator[key].bind(origNavigator);
+            } else {
+                (function (k) {
+                    utils.defineGetterSetter(newNavigator, key, function () {
+                        return origNavigator[k];
+                    });
+                })(key);
+            }
+        }
+    }
+    return newNavigator;
+}
+
+if (window.navigator) {
+    window.navigator = replaceNavigator(window.navigator);
+}
+
+if (!window.console) {
+    window.console = {
+        log: function () {}
+    };
+}
+if (!window.console.warn) {
+    window.console.warn = function (msg) {
+        this.log('warn: ' + msg);
+    };
+}
+
+// Register pause, resume and deviceready channels as events on document.
+channel.onPause = cordova.addDocumentEventHandler('pause');
+channel.onResume = cordova.addDocumentEventHandler('resume');
+channel.onActivated = cordova.addDocumentEventHandler('activated');
+channel.onDeviceReady = cordova.addStickyDocumentEventHandler('deviceready');
+
+// Listen for DOMContentLoaded and notify our channel subscribers.
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    channel.onDOMContentLoaded.fire();
+} else {
+    document.addEventListener('DOMContentLoaded', function () {
+        channel.onDOMContentLoaded.fire();
+    }, false);
+}
+
+// _nativeReady is global variable that the native side can set
+// to signify that the native code is ready. It is a global since
+// it may be called before any cordova JS is ready.
+if (window._nativeReady) {
+    channel.onNativeReady.fire();
+}
+
+modulemapper.clobbers('cordova', 'cordova');
+modulemapper.clobbers('cordova/exec', 'cordova.exec');
+modulemapper.clobbers('cordova/exec', 'Cordova.exec');
+
+// Call the platform-specific initialization.
+platform.bootstrap && platform.bootstrap();
+
+// Wrap in a setTimeout to support the use-case of having plugin JS appended to cordova.js.
+// The delay allows the attached modules to be defined before the plugin loader looks for them.
+setTimeout(function () {
+    pluginloader.load(function () {
+        channel.onPluginsReady.fire();
+    });
+}, 0);
+
+/**
+ * Create all cordova objects once native side is ready.
+ */
+channel.join(function () {
+    modulemapper.mapModules(window);
+
+    platform.initialize && platform.initialize();
+
+    // Fire event to notify that all objects are created
+    channel.onCordovaReady.fire();
+
+    // Fire onDeviceReady event once page has fully loaded, all
+    // constructors have run and cordova info has been received from native
+    // side.
+    channel.join(function () {
+        require('cordova').fireDocumentEvent('deviceready');
+    }, channel.deviceReadyChannelsArray);
+
+}, platformInitChannelsArray);
+
+});
+
+// file: src/common/init_b.js
+define("cordova/init_b", function(require, exports, module) {
 
 var channel = require('cordova/channel');
 var cordova = require('cordova');
@@ -1498,26 +1442,110 @@ channel.join(function () {
 
 }, platformInitChannelsArray);
 
-},{"cordova":"cordova","cordova/channel":"cordova/channel","cordova/exec":"cordova/exec","cordova/modulemapper":"cordova/modulemapper","cordova/platform":"cordova/platform","cordova/pluginloader":"cordova/pluginloader","cordova/utils":"cordova/utils"}],"cordova/modulemapper":[function(require,module,exports){
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/modulemapper.js
+define("cordova/modulemapper", function(require, exports, module) {
+
+var builder = require('cordova/builder');
+var moduleMap = define.moduleMap; // eslint-disable-line no-undef
+var symbolList;
+var deprecationMap;
+
+exports.reset = function () {
+    symbolList = [];
+    deprecationMap = {};
+};
+
+function addEntry (strategy, moduleName, symbolPath, opt_deprecationMessage) {
+    if (!(moduleName in moduleMap)) {
+        throw new Error('Module ' + moduleName + ' does not exist.');
+    }
+    symbolList.push(strategy, moduleName, symbolPath);
+    if (opt_deprecationMessage) {
+        deprecationMap[symbolPath] = opt_deprecationMessage;
+    }
+}
+
+// Note: Android 2.3 does have Function.bind().
+exports.clobbers = function (moduleName, symbolPath, opt_deprecationMessage) {
+    addEntry('c', moduleName, symbolPath, opt_deprecationMessage);
+};
+
+exports.merges = function (moduleName, symbolPath, opt_deprecationMessage) {
+    addEntry('m', moduleName, symbolPath, opt_deprecationMessage);
+};
+
+exports.defaults = function (moduleName, symbolPath, opt_deprecationMessage) {
+    addEntry('d', moduleName, symbolPath, opt_deprecationMessage);
+};
+
+exports.runs = function (moduleName) {
+    addEntry('r', moduleName, null);
+};
+
+function prepareNamespace (symbolPath, context) {
+    if (!symbolPath) {
+        return context;
+    }
+    var parts = symbolPath.split('.');
+    var cur = context;
+    for (var i = 0, part; part = parts[i]; ++i) { // eslint-disable-line no-cond-assign
+        cur = cur[part] = cur[part] || {};
+    }
+    return cur;
+}
+
+exports.mapModules = function (context) {
+    var origSymbols = {};
+    context.CDV_origSymbols = origSymbols;
+    for (var i = 0, len = symbolList.length; i < len; i += 3) {
+        var strategy = symbolList[i];
+        var moduleName = symbolList[i + 1];
+        var module = require(moduleName);
+        // <runs/>
+        if (strategy === 'r') {
+            continue;
+        }
+        var symbolPath = symbolList[i + 2];
+        var lastDot = symbolPath.lastIndexOf('.');
+        var namespace = symbolPath.substr(0, lastDot);
+        var lastName = symbolPath.substr(lastDot + 1);
+
+        var deprecationMsg = symbolPath in deprecationMap ? 'Access made to deprecated symbol: ' + symbolPath + '. ' + deprecationMsg : null;
+        var parentObj = prepareNamespace(namespace, context);
+        var target = parentObj[lastName];
+
+        if (strategy === 'm' && target) {
+            builder.recursiveMerge(target, module);
+        } else if ((strategy === 'd' && !target) || (strategy !== 'd')) {
+            if (!(symbolPath in origSymbols)) {
+                origSymbols[symbolPath] = target;
+            }
+            builder.assignOrWrapInDeprecateGetter(parentObj, lastName, module, deprecationMsg);
+        }
+    }
+};
+
+exports.getOriginalSymbol = function (context, symbolPath) {
+    var origSymbols = context.CDV_origSymbols;
+    if (origSymbols && (symbolPath in origSymbols)) {
+        return origSymbols[symbolPath];
+    }
+    var parts = symbolPath.split('.');
+    var obj = context;
+    for (var i = 0; i < parts.length; ++i) {
+        obj = obj && obj[parts[i]];
+    }
+    return obj;
+};
+
+exports.reset();
+
+});
+
+// file: src/common/modulemapper_b.js
+define("cordova/modulemapper_b", function(require, exports, module) {
 
 var builder = require('cordova/builder');
 var symbolList = [];
@@ -1610,27 +1638,10 @@ exports.getOriginalSymbol = function (context, symbolPath) {
 
 exports.reset();
 
-},{"cordova/builder":"cordova/builder"}],"cordova/platform":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: /Users/brodybits/Documents/cordova/cordova-android/cordova-js-src/platform.js
+define("cordova/platform", function(require, exports, module) {
 
 // The last resume event that was received that had the result of a plugin call.
 var lastResumeEvent = null;
@@ -1737,27 +1748,10 @@ function onMessageFromNative(msg) {
     }
 }
 
-},{"cordova":"cordova","cordova/channel":"cordova/channel","cordova/exec":"cordova/exec","cordova/modulemapper":"cordova/modulemapper"}],"cordova/plugin/android/app":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: /Users/brodybits/Documents/cordova/cordova-android/cordova-js-src/plugin/android/app.js
+define("cordova/plugin/android/app", function(require, exports, module) {
 
 var exec = require('cordova/exec');
 var APP_PLUGIN_NAME = Number(require('cordova').platformVersion.split('.')[0]) >= 4 ? 'CoreAndroid' : 'App';
@@ -1847,54 +1841,120 @@ module.exports = {
     }
 };
 
-},{"cordova":"cordova","cordova/exec":"cordova/exec"}],"cordova/plugin_list":[function(require,module,exports){
-module.exports = [
-  {
-    "file": "www/bluetoothle.js",
-    "id": "cordova-plugin-bluetoothle.BluetoothLe",
-    "name": "BluetoothLe",
-    "pluginId": "cordova-plugin-bluetoothle",
-    "clobbers": [
-      "window.bluetoothle"
-    ]
-  },
-  {
-    "file": "www/bluetoothSerial.js",
-    "id": "cordova-plugin-bluetooth-serial.bluetoothSerial",
-    "name": "bluetoothSerial",
-    "pluginId": "cordova-plugin-bluetooth-serial",
-    "clobbers": [
-      "window.bluetoothSerial"
-    ]
-  }
-];
-module.exports.metadata = {
-  "cordova-plugin-bluetoothle": "4.4.4",
-  "cordova-plugin-whitelist": "1.3.3",
-  "cordova-plugin-bluetooth-serial": "0.4.7"
+});
+
+// file: src/common/pluginloader.js
+define("cordova/pluginloader", function(require, exports, module) {
+
+var modulemapper = require('cordova/modulemapper');
+
+// Helper function to inject a <script> tag.
+// Exported for testing.
+exports.injectScript = function (url, onload, onerror) {
+    var script = document.createElement('script');
+    // onload fires even when script fails loads with an error.
+    script.onload = onload;
+    // onerror fires for malformed URLs.
+    script.onerror = onerror;
+    script.src = url;
+    document.head.appendChild(script);
 };
 
-},{}],"cordova/pluginloader":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+function injectIfNecessary (id, url, onload, onerror) {
+    onerror = onerror || onload;
+    if (id in define.moduleMap) { // eslint-disable-line no-undef
+        onload();
+    } else {
+        exports.injectScript(url, function () {
+            if (id in define.moduleMap) { // eslint-disable-line no-undef
+                onload();
+            } else {
+                onerror();
+            }
+        }, onerror);
+    }
+}
+
+function onScriptLoadingComplete (moduleList, finishPluginLoading) {
+    // Loop through all the plugins and then through their clobbers and merges.
+    for (var i = 0, module; module = moduleList[i]; i++) { // eslint-disable-line no-cond-assign
+        if (module.clobbers && module.clobbers.length) {
+            for (var j = 0; j < module.clobbers.length; j++) {
+                modulemapper.clobbers(module.id, module.clobbers[j]);
+            }
+        }
+
+        if (module.merges && module.merges.length) {
+            for (var k = 0; k < module.merges.length; k++) {
+                modulemapper.merges(module.id, module.merges[k]);
+            }
+        }
+
+        // Finally, if runs is truthy we want to simply require() the module.
+        if (module.runs) {
+            modulemapper.runs(module.id);
+        }
+    }
+
+    finishPluginLoading();
+}
+
+// Handler for the cordova_plugins.js content.
+// See plugman's plugin_loader.js for the details of this object.
+// This function is only called if the really is a plugins array that isn't empty.
+// Otherwise the onerror response handler will just call finishPluginLoading().
+function handlePluginsObject (path, moduleList, finishPluginLoading) {
+    // Now inject the scripts.
+    var scriptCounter = moduleList.length;
+
+    if (!scriptCounter) {
+        finishPluginLoading();
+        return;
+    }
+    function scriptLoadedCallback () {
+        if (!--scriptCounter) {
+            onScriptLoadingComplete(moduleList, finishPluginLoading);
+        }
+    }
+
+    for (var i = 0; i < moduleList.length; i++) {
+        injectIfNecessary(moduleList[i].id, path + moduleList[i].file, scriptLoadedCallback);
+    }
+}
+
+function findCordovaPath () {
+    var path = null;
+    var scripts = document.getElementsByTagName('script');
+    var term = '/cordova.js';
+    for (var n = scripts.length - 1; n > -1; n--) {
+        var src = scripts[n].src.replace(/\?.*$/, ''); // Strip any query param (CB-6007).
+        if (src.indexOf(term) === (src.length - term.length)) {
+            path = src.substring(0, src.length - term.length) + '/';
+            break;
+        }
+    }
+    return path;
+}
+
+// Tries to load all plugins' js-modules.
+// This is an async process, but onDeviceReady is blocked on onPluginsReady.
+// onPluginsReady is fired when there are no plugins to load, or they are all done.
+exports.load = function (callback) {
+    var pathPrefix = findCordovaPath();
+    if (pathPrefix === null) {
+        console.log('Could not find cordova.js script tag. Plugin loading may fail.');
+        pathPrefix = '';
+    }
+    injectIfNecessary('cordova/plugin_list', pathPrefix + 'cordova_plugins.js', function () {
+        var moduleList = require('cordova/plugin_list');
+        handlePluginsObject(pathPrefix, moduleList, callback);
+    }, callback);
+};
+
+});
+
+// file: src/common/pluginloader_b.js
+define("cordova/pluginloader_b", function(require, exports, module) {
 
 var modulemapper = require('cordova/modulemapper');
 
@@ -1938,27 +1998,10 @@ exports.load = function (callback) {
     callback();
 };
 
-},{"cordova/modulemapper":"cordova/modulemapper","cordova/plugin_list":"cordova/plugin_list"}],"cordova/urlutil":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/urlutil.js
+define("cordova/urlutil", function(require, exports, module) {
 
 /**
  * For already absolute URLs, returns what is passed in.
@@ -1970,27 +2013,10 @@ exports.makeAbsolute = function makeAbsolute (url) {
     return anchorEl.href;
 };
 
-},{}],"cordova/utils":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
+
+// file: src/common/utils.js
+define("cordova/utils", function(require, exports, module) {
 
 var utils = exports;
 
@@ -2153,248 +2179,11 @@ utils.alert = function (msg) {
     }
 };
 
-},{}],"cordova":[function(require,module,exports){
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
+});
 
-// Workaround for Windows 10 in hosted environment case
-// http://www.w3.org/html/wg/drafts/html/master/browsers.html#named-access-on-the-window-object
-if (window.cordova && !(window.cordova instanceof HTMLElement)) { // eslint-disable-line no-undef
-    throw new Error('cordova already defined');
-}
+window.cordova = require('cordova');
+// file: src/scripts/bootstrap.js
 
-var channel = require('cordova/channel');
-var platform = require('cordova/platform');
+require('cordova/init');
 
-/**
- * Intercept calls to addEventListener + removeEventListener and handle deviceready,
- * resume, and pause events.
- */
-var m_document_addEventListener = document.addEventListener;
-var m_document_removeEventListener = document.removeEventListener;
-var m_window_addEventListener = window.addEventListener;
-var m_window_removeEventListener = window.removeEventListener;
-
-/**
- * Houses custom event handlers to intercept on document + window event listeners.
- */
-var documentEventHandlers = {};
-var windowEventHandlers = {};
-
-document.addEventListener = function (evt, handler, capture) {
-    var e = evt.toLowerCase();
-    if (typeof documentEventHandlers[e] !== 'undefined') {
-        documentEventHandlers[e].subscribe(handler);
-    } else {
-        m_document_addEventListener.call(document, evt, handler, capture);
-    }
-};
-
-window.addEventListener = function (evt, handler, capture) {
-    var e = evt.toLowerCase();
-    if (typeof windowEventHandlers[e] !== 'undefined') {
-        windowEventHandlers[e].subscribe(handler);
-    } else {
-        m_window_addEventListener.call(window, evt, handler, capture);
-    }
-};
-
-document.removeEventListener = function (evt, handler, capture) {
-    var e = evt.toLowerCase();
-    // If unsubscribing from an event that is handled by a plugin
-    if (typeof documentEventHandlers[e] !== 'undefined') {
-        documentEventHandlers[e].unsubscribe(handler);
-    } else {
-        m_document_removeEventListener.call(document, evt, handler, capture);
-    }
-};
-
-window.removeEventListener = function (evt, handler, capture) {
-    var e = evt.toLowerCase();
-    // If unsubscribing from an event that is handled by a plugin
-    if (typeof windowEventHandlers[e] !== 'undefined') {
-        windowEventHandlers[e].unsubscribe(handler);
-    } else {
-        m_window_removeEventListener.call(window, evt, handler, capture);
-    }
-};
-
-function createEvent (type, data) {
-    var event = document.createEvent('Events');
-    event.initEvent(type, false, false);
-    if (data) {
-        for (var i in data) {
-            if (data.hasOwnProperty(i)) {
-                event[i] = data[i];
-            }
-        }
-    }
-    return event;
-}
-
-/* eslint-disable no-undef */
-var cordova = {
-    platformVersion: PLATFORM_VERSION_BUILD_LABEL,
-    version: PLATFORM_VERSION_BUILD_LABEL,
-    require: require,
-    platformId: platform.id,
-
-    /* eslint-enable no-undef */
-
-    /**
-     * Methods to add/remove your own addEventListener hijacking on document + window.
-     */
-    addWindowEventHandler: function (event) {
-        return (windowEventHandlers[event] = channel.create(event));
-    },
-    addStickyDocumentEventHandler: function (event) {
-        return (documentEventHandlers[event] = channel.createSticky(event));
-    },
-    addDocumentEventHandler: function (event) {
-        return (documentEventHandlers[event] = channel.create(event));
-    },
-    removeWindowEventHandler: function (event) {
-        delete windowEventHandlers[event];
-    },
-    removeDocumentEventHandler: function (event) {
-        delete documentEventHandlers[event];
-    },
-    /**
-     * Retrieve original event handlers that were replaced by Cordova
-     *
-     * @return object
-     */
-    getOriginalHandlers: function () {
-        return {'document': {'addEventListener': m_document_addEventListener, 'removeEventListener': m_document_removeEventListener},
-            'window': {'addEventListener': m_window_addEventListener, 'removeEventListener': m_window_removeEventListener}};
-    },
-    /**
-     * Method to fire event from native code
-     * bNoDetach is required for events which cause an exception which needs to be caught in native code
-     */
-    fireDocumentEvent: function (type, data, bNoDetach) {
-        var evt = createEvent(type, data);
-        if (typeof documentEventHandlers[type] !== 'undefined') {
-            if (bNoDetach) {
-                documentEventHandlers[type].fire(evt);
-            } else {
-                setTimeout(function () {
-                    // Fire deviceready on listeners that were registered before cordova.js was loaded.
-                    if (type === 'deviceready') {
-                        document.dispatchEvent(evt);
-                    }
-                    documentEventHandlers[type].fire(evt);
-                }, 0);
-            }
-        } else {
-            document.dispatchEvent(evt);
-        }
-    },
-    fireWindowEvent: function (type, data) {
-        var evt = createEvent(type, data);
-        if (typeof windowEventHandlers[type] !== 'undefined') {
-            setTimeout(function () {
-                windowEventHandlers[type].fire(evt);
-            }, 0);
-        } else {
-            window.dispatchEvent(evt);
-        }
-    },
-
-    /**
-     * Plugin callback mechanism.
-     */
-    // Randomize the starting callbackId to avoid collisions after refreshing or navigating.
-    // This way, it's very unlikely that any new callback would get the same callbackId as an old callback.
-    callbackId: Math.floor(Math.random() * 2000000000),
-    callbacks: {},
-    callbackStatus: {
-        NO_RESULT: 0,
-        OK: 1,
-        CLASS_NOT_FOUND_EXCEPTION: 2,
-        ILLEGAL_ACCESS_EXCEPTION: 3,
-        INSTANTIATION_EXCEPTION: 4,
-        MALFORMED_URL_EXCEPTION: 5,
-        IO_EXCEPTION: 6,
-        INVALID_ACTION: 7,
-        JSON_EXCEPTION: 8,
-        ERROR: 9
-    },
-    /**
-     * Called by native code when returning successful result from an action.
-     */
-    callbackSuccess: function (callbackId, args) {
-        this.callbackFromNative(callbackId, true, args.status, [args.message], args.keepCallback);
-    },
-    /**
-     * Called by native code when returning error result from an action.
-     */
-    callbackError: function (callbackId, args) {
-        // TODO: Deprecate callbackSuccess and callbackError in favour of callbackFromNative.
-        // Derive success from status.
-        this.callbackFromNative(callbackId, false, args.status, [args.message], args.keepCallback);
-    },
-    /**
-     * Called by native code when returning the result from an action.
-     */
-    callbackFromNative: function (callbackId, isSuccess, status, args, keepCallback) {
-        try {
-            var callback = cordova.callbacks[callbackId];
-            if (callback) {
-                if (isSuccess && status === cordova.callbackStatus.OK) {
-                    callback.success && callback.success.apply(null, args);
-                } else if (!isSuccess) {
-                    callback.fail && callback.fail.apply(null, args);
-                }
-                /*
-                else
-                    Note, this case is intentionally not caught.
-                    this can happen if isSuccess is true, but callbackStatus is NO_RESULT
-                    which is used to remove a callback from the list without calling the callbacks
-                    typically keepCallback is false in this case
-                */
-
-                // Clear callback if not expecting any more results
-                if (!keepCallback) {
-                    delete cordova.callbacks[callbackId];
-                }
-            }
-        } catch (err) {
-            var msg = 'Error in ' + (isSuccess ? 'Success' : 'Error') + ' callbackId: ' + callbackId + ' : ' + err;
-            console && console.log && console.log(msg);
-            this.fireWindowEvent('cordovacallbackerror', { 'message': msg });
-            throw err;
-        }
-    },
-    addConstructor: function (func) {
-        channel.onCordovaReady.subscribe(function () {
-            try {
-                func();
-            } catch (e) {
-                console.log('Failed to run constructor: ' + e);
-            }
-        });
-    }
-};
-
-window.cordova = module.exports = cordova;
-
-},{"cordova/channel":"cordova/channel","cordova/platform":"cordova/platform"}]},{},["cordova/plugin_list",1]);
+})();
