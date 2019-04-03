@@ -1,7 +1,9 @@
-import React, { useReducer, memo } from "react";
+import React, { useReducer, useState, memo } from "react";
+import { NavLink, Route } from "react-router-dom";
 import { assign } from "lodash";
 import bluetoothSerial from "../services/bluetoothSerial";
 import StatusChecker from "./StatusChecker";
+import ManageParams from "./ManageParams";
 
 const ENABLE_STATUS = {
   NO: 0,
@@ -139,16 +141,17 @@ const EnableError = memo(({errorInfo}) => {
 });
 export default () => {
  const [state, dispatch] = useReducer(reducer, initialState);
- console.log(state);
  return (
    <div>
      <div>
+       <NavLink to="/test/parameters">Parameters</NavLink>
        <Enable isEnabled={state.enabled} dispatch={dispatch} />
        <EnableError errorInfo={state.error} />
        <p>Discovery</p>
        <button onClick={e => console.log('discover')}>Discover</button>
        <EnabledDiscoverable isEnabled={state.enabled} isDiscoverable={state.discoverable} dispatch={dispatch} />
        <StatusChecker onAsyncCallComplete={(enabled) => { actions.updateEnabledStatus(enabled)(dispatch);  }} asyncCall={() => actions.isEnabled()(dispatch)} />
+       <Route path="/test/parameters" render={() => <ManageParams />} />
      </div>
    </div>)
 };

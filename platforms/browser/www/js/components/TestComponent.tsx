@@ -1,7 +1,9 @@
-import React, { useReducer, memo } from "react";
+import React, { useReducer, useState, memo } from "react";
+import { NavLink, Route } from "react-router-dom";
 import { assign } from "lodash";
 import bluetoothSerial from "../services/bluetoothSerial";
 import StatusChecker from "./StatusChecker";
+import ManageParams from "./ManageParams";
 
 const ENABLE_STATUS = {
   NO: 0,
@@ -68,9 +70,9 @@ const actions = {
   setDiscoverable: () => (dispatch: Function) => {
     bluetoothSerial.setDiscoverable();
     dispatch({type: actions.DISCOVERABLE_RQ, payload: null});
-    // setTimeout(() => {
-    //   dispatch({type: actions.UNDISCOVERABLE_RQ, payload: null});
-    // }, 120 * 1000);
+    setTimeout(() => {
+      dispatch({type: actions.UNDISCOVERABLE_RQ, payload: null});
+    }, 120 * 1000);
   },
   isEnabled: () => (dispatch: Function) => {
     setTimeout(() => {
@@ -125,21 +127,31 @@ const Discoverable = ({isDiscoverable, dispatch}) => {
   }
 };
 
+const EnabledDiscoverable = ({isEnabled, isDiscoverable, dispatch}) => {
+  if(isEnabled) {
+    return (<Discoverable isDiscoverable={isDiscoverable} dispatch={dispatch} />)
+  } else {
+    return (<span />)
+  }
+
+}
+
 const EnableError = memo(({errorInfo}) => {
   return (errorInfo === null ? <span></span> : <p>{errorInfo}</p>);
 });
 export default () => {
  const [state, dispatch] = useReducer(reducer, initialState);
- console.log(state);
  return (
    <div>
      <div>
+       <NavLink to="/test/parameters">Parameters</NavLink>
        <Enable isEnabled={state.enabled} dispatch={dispatch} />
        <EnableError errorInfo={state.error} />
        <p>Discovery</p>
        <button onClick={e => console.log('discover')}>Discover</button>
-       <Discoverable isDiscoverable={state.discoverable} dispatch={dispatch} />
+       <EnabledDiscoverable isEnabled={state.enabled} isDiscoverable={state.discoverable} dispatch={dispatch} />
        <StatusChecker onAsyncCallComplete={(enabled) => { actions.updateEnabledStatus(enabled)(dispatch);  }} asyncCall={() => actions.isEnabled()(dispatch)} />
+       <Route path="/test/parameters" render={() => <ManageParams />} />
      </div>
    </div>)
 };
