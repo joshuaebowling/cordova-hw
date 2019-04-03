@@ -9,7 +9,7 @@ INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/s
 INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:1-17:12
 INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:1-17:12
 	package
-		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:102-129
+		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:102-133
 		INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml
 		INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml
 	android:versionName
@@ -19,7 +19,7 @@ INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/s
 	android:hardwareAccelerated
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:11-45
 	xmlns:android
-		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:130-188
+		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:134-192
 	android:versionCode
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:2:46-73
 		INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml
@@ -52,7 +52,7 @@ ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:5:18-52
 	android:icon
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:5:53-80
-activity#com.example.hello.MainActivity
+activity#com.example.btTester2.MainActivity
 ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:6:9-11:20
 	android:label
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:6:97-134

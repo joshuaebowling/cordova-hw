@@ -9,6 +9,7 @@ declare namespace Services {
     discover: () => Promise<Array<object> | Error>;
     enable: () => Promise<boolean | Error>;
     isEnabled: () => Promise<object>;
+    setDiscoverable:() => Promise<object> | Error;
   }
 
 }

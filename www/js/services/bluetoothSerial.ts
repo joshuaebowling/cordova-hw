@@ -4,7 +4,9 @@ import bluetoothSerial from "cordova-plugin-bluetooth-serial";
 
 const bluetoothSerialWrapper:Services.BluetoothSerial = {
   discover: () => {
-
+    return new Promise((resolve, reject) => {
+      bluetoothSerial.discoverUnpaired
+    });
   },
   enable: () => {
     return new Promise((resolve, reject) => {
@@ -15,6 +17,11 @@ const bluetoothSerialWrapper:Services.BluetoothSerial = {
     return new Promise((resolve, reject) => {
       bluetoothSerial.isEnabled(resolve, reject);
     });
+  },
+  setDiscoverable: () => {
+    return new Promise(() => {
+      bluetoothSerial.setDiscoverable(120);
+    })
   }
 };
 
