@@ -6,7 +6,8 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es2015",
-    "module" : "commonjs"
+    "module" : "commonjs",
+    "jsx":"react"
   },
   "include": [
     "./www/ts/**/*",
