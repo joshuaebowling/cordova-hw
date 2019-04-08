@@ -1,27 +1,10 @@
 /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+import { clone } from "lodash";
 
 const serviceParams: Params.initService = {
   service: "1234",
-  characteristics: [
-    {
-      uuid: "ABCD",
-      permissions: {
-        read: true,
-        write: true,
-        readEncryptionRequired: true,
-        writeEncryptionRequired: true
-      },
-      properties: {
-        read: true,
-        writeWithoutResponse: true,
-        write: true,
-        notify: true,
-        indicate: true,
-        authenticatedSignedWrites: true,
-        notifyEncryptionRequired: true,
-        indicateEncryptionRequired: true
-      }
-    }
-  ]
+  characteristics: []
 };
+
+export default () => clone(serviceParams);

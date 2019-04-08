@@ -5,21 +5,27 @@ import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
+import characteristics from "./Characteristics";
+import Characteristics from "./Characteristics";
+
 const ServiceOption = ({ type, name, value }) => {
   return (
     <div>
       <label htmlFor={name}>{name}</label>
-      <input type="checkbox" id={name} value={value} />
+      <input type="checkbox" id={name} defaultValue={value} />
     </div>
   );
 };
 
-const ServiceOptions = ({ name, params }) => {
+const ServiceOptions = (serviceModel: Params.initService) => {
   return (
     <div>
       <h1>Service Params</h1>
       <Formik
-        initialValues={{ name, params }}
+        initialValues={{
+          name: serviceModel.service,
+          characteristics: serviceModel.characteristics
+        }}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
             alert(JSON.stringify(values, null, 2));
@@ -27,9 +33,7 @@ const ServiceOptions = ({ name, params }) => {
           }, 500);
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string()
-            .email()
-            .required("Required")
+          name: Yup.string().required("Required")
         })}
       >
         {props => {
@@ -44,20 +48,21 @@ const ServiceOptions = ({ name, params }) => {
             handleSubmit,
             handleReset
           } = props;
-          const ServiceParams = values.params.map((name, value) => (
-            <ServiceOption name={name} value={value} type={"params"} />
-          ));
-          const ServicePermissions = values.params.map((name, value) => (
-            <ServiceOption name={name} value={value} type={"params"} />
-          ));
+          // const ServiceParams = values.properties.map((name, value) => (
+          //   <ServiceOption name={name} value={value} type={"properties"} />
+          // ));
+          // const ServicePermissions = values.permissions.map((name, value) => (
+          //   <ServiceOption name={name} value={value} type={"permissions"} />
+          // ));
           return (
             <form onSubmit={handleSubmit}>
               <label htmlFor="serviceName">Service Name</label>
-              <input type="text" id="serviceName" value={values.name} />
-              <h3>Service Params</h3>
+              <input type="text" id="serviceName" defaultValue={values.name} />
+              <Characteristics model={values.characteristics} />
+              {/* <h3>Service Params</h3>
               {ServiceParams}
               <h3>Permisions</h3>
-              {ServicePermissions}
+              {ServicePermissions} */}
             </form>
           );
         }}

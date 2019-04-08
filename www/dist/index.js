@@ -64102,7 +64102,7 @@ function addMethod(schemaType, name, fn) {
   if (typeof fn !== 'function') throw new TypeError('Method function must be provided');
   schemaType.prototype[name] = fn;
 }
-},{"@babel/runtime/helpers/interopRequireDefault":"../../node_modules/yup/node_modules/@babel/runtime/helpers/interopRequireDefault.js","./mixed":"../../node_modules/yup/lib/mixed.js","./boolean":"../../node_modules/yup/lib/boolean.js","./string":"../../node_modules/yup/lib/string.js","./number":"../../node_modules/yup/lib/number.js","./date":"../../node_modules/yup/lib/date.js","./object":"../../node_modules/yup/lib/object.js","./array":"../../node_modules/yup/lib/array.js","./Reference":"../../node_modules/yup/lib/Reference.js","./Lazy":"../../node_modules/yup/lib/Lazy.js","./ValidationError":"../../node_modules/yup/lib/ValidationError.js","./util/reach":"../../node_modules/yup/lib/util/reach.js","./util/isSchema":"../../node_modules/yup/lib/util/isSchema.js","./setLocale":"../../node_modules/yup/lib/setLocale.js"}],"components/Params/ServiceOptions.tsx":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../../node_modules/yup/node_modules/@babel/runtime/helpers/interopRequireDefault.js","./mixed":"../../node_modules/yup/lib/mixed.js","./boolean":"../../node_modules/yup/lib/boolean.js","./string":"../../node_modules/yup/lib/string.js","./number":"../../node_modules/yup/lib/number.js","./date":"../../node_modules/yup/lib/date.js","./object":"../../node_modules/yup/lib/object.js","./array":"../../node_modules/yup/lib/array.js","./Reference":"../../node_modules/yup/lib/Reference.js","./Lazy":"../../node_modules/yup/lib/Lazy.js","./ValidationError":"../../node_modules/yup/lib/ValidationError.js","./util/reach":"../../node_modules/yup/lib/util/reach.js","./util/isSchema":"../../node_modules/yup/lib/util/isSchema.js","./setLocale":"../../node_modules/yup/lib/setLocale.js"}],"components/Params/Characteristics.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../../ts/index.d.ts" />
 /// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -64111,6 +64111,47 @@ var __importDefault = this && this.__importDefault || function (mod) {
     "default": mod
   };
 };
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importDefault(require("react"));
+
+var Characteristic = function Characteristic(_ref) {
+  var model = _ref.model,
+      setCurrentCharacteristic = _ref.setCurrentCharacteristic;
+  console.log("cmodel", model);
+  return react_1.default.createElement("button", {
+    onClick: function onClick(e) {
+      return setCurrentCharacteristic(model.uuid);
+    }
+  }, "uuid: ", model.uuid);
+};
+
+var Characteristics = function Characteristics(_ref2) {
+  var model = _ref2.model,
+      setCurrentCharacteristic = _ref2.setCurrentCharacteristic;
+  var characteristics = model.map(function (ch) {
+    return react_1.default.createElement(Characteristic, {
+      model: ch
+    });
+  });
+  return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Characteristics"), characteristics);
+};
+
+exports.default = Characteristics;
+},{"react":"../../node_modules/react/index.js"}],"components/Params/Service.tsx":[function(require,module,exports) {
+"use strict"; /// <reference path="../../../ts/index.d.ts" />
+/// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
@@ -64122,15 +64163,23 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var react_1 = __importDefault(require("react"));
+var react_1 = __importStar(require("react"));
 
 var formik_1 = require("formik");
 
 var Yup = __importStar(require("yup"));
+
+var Characteristics_1 = __importDefault(require("./Characteristics"));
 
 var ServiceOption = function ServiceOption(_ref) {
   var type = _ref.type,
@@ -64141,27 +64190,30 @@ var ServiceOption = function ServiceOption(_ref) {
   }, name), react_1.default.createElement("input", {
     type: "checkbox",
     id: name,
-    value: value
+    defaultValue: value
   }));
 };
 
-var ServiceOptions = function ServiceOptions(_ref2) {
-  var name = _ref2.name,
-      params = _ref2.params;
+var ServiceOptions = function ServiceOptions(serviceModel) {
+  var _react_1$useState = react_1.useState(null),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      currentCharacteristic = _react_1$useState2[0],
+      setCurrentCharacteristic = _react_1$useState2[1];
+
   return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Service Params"), react_1.default.createElement(formik_1.Formik, {
     initialValues: {
-      name: name,
-      params: params
+      name: serviceModel.service,
+      characteristics: serviceModel.characteristics
     },
-    onSubmit: function onSubmit(values, _ref3) {
-      var setSubmitting = _ref3.setSubmitting;
+    onSubmit: function onSubmit(values, _ref2) {
+      var setSubmitting = _ref2.setSubmitting;
       setTimeout(function () {
         alert(JSON.stringify(values, null, 2));
         setSubmitting(false);
       }, 500);
     },
     validationSchema: Yup.object().shape({
-      email: Yup.string().email().required("Required")
+      name: Yup.string().required("Required")
     })
   }, function (props) {
     var values = props.values,
@@ -64173,20 +64225,13 @@ var ServiceOptions = function ServiceOptions(_ref2) {
         handleBlur = props.handleBlur,
         handleSubmit = props.handleSubmit,
         handleReset = props.handleReset;
-    var ServiceParams = values.params.map(function (name, value) {
-      return react_1.default.createElement(ServiceOption, {
-        name: name,
-        value: value,
-        type: "params"
-      });
-    });
-    var ServicePermissions = values.params.map(function (name, value) {
-      return react_1.default.createElement(ServiceOption, {
-        name: name,
-        value: value,
-        type: "params"
-      });
-    });
+    console.log("chars", values.characteristics); // const ServiceParams = values.properties.map((name, value) => (
+    //   <ServiceOption name={name} value={value} type={"properties"} />
+    // ));
+    // const ServicePermissions = values.permissions.map((name, value) => (
+    //   <ServiceOption name={name} value={value} type={"permissions"} />
+    // ));
+
     return react_1.default.createElement("form", {
       onSubmit: handleSubmit
     }, react_1.default.createElement("label", {
@@ -64194,13 +64239,81 @@ var ServiceOptions = function ServiceOptions(_ref2) {
     }, "Service Name"), react_1.default.createElement("input", {
       type: "text",
       id: "serviceName",
-      value: values.name
-    }), react_1.default.createElement("h3", null, "Service Params"), ServiceParams, react_1.default.createElement("h3", null, "Permisions"), ServicePermissions);
+      defaultValue: values.name
+    }), react_1.default.createElement(Characteristics_1.default, {
+      model: values.characteristics,
+      setCurrentCharacteristic: setCurrentCharacteristic
+    }));
   }));
 };
 
 exports.default = ServiceOptions;
-},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","yup":"../../node_modules/yup/lib/index.js"}],"components/ManageParams.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","yup":"../../node_modules/yup/lib/index.js","./Characteristics":"components/Params/Characteristics.tsx"}],"models/Characteristic.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var lodash_1 = require("lodash");
+
+var Characteristic = {
+  // this is only characteristic!!!
+  uuid: "ABCD",
+  permissions: {
+    read: true,
+    write: true,
+    readEncryptionRequired: true,
+    writeEncryptionRequired: true
+  },
+  properties: {
+    read: true,
+    writeWithoutResponse: true,
+    write: true,
+    notify: true,
+    indicate: true,
+    authenticatedSignedWrites: true,
+    notifyEncryptionRequired: true,
+    indicateEncryptionRequired: true
+  }
+};
+
+exports.default = function () {
+  return lodash_1.clone(Characteristic);
+};
+},{"lodash":"../../node_modules/lodash/lodash.js"}],"models/ServiceParams.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+}); /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+var lodash_1 = require("lodash");
+
+var Characteristic_1 = __importDefault(require("./Characteristic"));
+
+var addCharacteristic = function addCharacteristic() {
+  return Characteristic_1.default();
+};
+
+exports.addCharacteristic = addCharacteristic;
+var serviceParams = {
+  service: "1234",
+  characteristics: [addCharacteristic()]
+};
+
+exports.default = function () {
+  return lodash_1.clone(serviceParams);
+};
+},{"lodash":"../../node_modules/lodash/lodash.js","./Characteristic":"models/Characteristic.ts"}],"components/ManageParams.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -64216,18 +64329,19 @@ Object.defineProperty(exports, "__esModule", {
 
 var react_1 = __importDefault(require("react"));
 
-var ServiceOptions_1 = __importDefault(require("./Params/ServiceOptions"));
+var Service_1 = __importDefault(require("./Params/Service"));
+
+var ServiceParams_1 = __importDefault(require("../models/ServiceParams"));
+
+var model = ServiceParams_1.default();
 
 var ManageParams = function ManageParams(_ref) {
   var initParams = _ref.initParams;
-  return react_1.default.createElement("div", null, react_1.default.createElement(ServiceOptions_1.default, {
-    name: "test",
-    params: []
-  }));
+  return react_1.default.createElement("div", null, react_1.default.createElement(Service_1.default, Object.assign({}, model)));
 };
 
 exports.default = ManageParams;
-},{"react":"../../node_modules/react/index.js","./Params/ServiceOptions":"components/Params/ServiceOptions.tsx"}],"components/TestComponent.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","./Params/Service":"components/Params/Service.tsx","../models/ServiceParams":"models/ServiceParams.ts"}],"components/TestComponent.tsx":[function(require,module,exports) {
 "use strict";
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }

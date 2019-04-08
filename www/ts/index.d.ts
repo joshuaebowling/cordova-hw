@@ -52,4 +52,7 @@ declare namespace Components {
   interface ServiceParamArguments {
     initParams: Params.initService;
   }
+  class ServiceParams {
+    constructor(options: ServiceParamArguments);
+  }
 }
