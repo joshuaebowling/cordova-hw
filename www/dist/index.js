@@ -64102,14 +64102,23 @@ function addMethod(schemaType, name, fn) {
   if (typeof fn !== 'function') throw new TypeError('Method function must be provided');
   schemaType.prototype[name] = fn;
 }
-},{"@babel/runtime/helpers/interopRequireDefault":"../../node_modules/yup/node_modules/@babel/runtime/helpers/interopRequireDefault.js","./mixed":"../../node_modules/yup/lib/mixed.js","./boolean":"../../node_modules/yup/lib/boolean.js","./string":"../../node_modules/yup/lib/string.js","./number":"../../node_modules/yup/lib/number.js","./date":"../../node_modules/yup/lib/date.js","./object":"../../node_modules/yup/lib/object.js","./array":"../../node_modules/yup/lib/array.js","./Reference":"../../node_modules/yup/lib/Reference.js","./Lazy":"../../node_modules/yup/lib/Lazy.js","./ValidationError":"../../node_modules/yup/lib/ValidationError.js","./util/reach":"../../node_modules/yup/lib/util/reach.js","./util/isSchema":"../../node_modules/yup/lib/util/isSchema.js","./setLocale":"../../node_modules/yup/lib/setLocale.js"}],"components/Params/Characteristics.tsx":[function(require,module,exports) {
-"use strict"; /// <reference path="../../../ts/index.d.ts" />
-/// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+},{"@babel/runtime/helpers/interopRequireDefault":"../../node_modules/yup/node_modules/@babel/runtime/helpers/interopRequireDefault.js","./mixed":"../../node_modules/yup/lib/mixed.js","./boolean":"../../node_modules/yup/lib/boolean.js","./string":"../../node_modules/yup/lib/string.js","./number":"../../node_modules/yup/lib/number.js","./date":"../../node_modules/yup/lib/date.js","./object":"../../node_modules/yup/lib/object.js","./array":"../../node_modules/yup/lib/array.js","./Reference":"../../node_modules/yup/lib/Reference.js","./Lazy":"../../node_modules/yup/lib/Lazy.js","./ValidationError":"../../node_modules/yup/lib/ValidationError.js","./util/reach":"../../node_modules/yup/lib/util/reach.js","./util/isSchema":"../../node_modules/yup/lib/util/isSchema.js","./setLocale":"../../node_modules/yup/lib/setLocale.js"}],"components/Params/Characteristic.tsx":[function(require,module,exports) {
+"use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
   };
+};
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
 };
 
 Object.defineProperty(exports, "__esModule", {
@@ -64118,30 +64127,80 @@ Object.defineProperty(exports, "__esModule", {
 
 var react_1 = __importDefault(require("react"));
 
-var Characteristic = function Characteristic(_ref) {
-  var model = _ref.model,
-      setCurrentCharacteristic = _ref.setCurrentCharacteristic;
-  console.log("cmodel", model);
-  return react_1.default.createElement("button", {
-    onClick: function onClick(e) {
-      return setCurrentCharacteristic(model.uuid);
-    }
-  }, "uuid: ", model.uuid);
-};
+var formik_1 = require("formik");
 
-var Characteristics = function Characteristics(_ref2) {
-  var model = _ref2.model,
-      setCurrentCharacteristic = _ref2.setCurrentCharacteristic;
-  var characteristics = model.map(function (ch) {
-    return react_1.default.createElement(Characteristic, {
-      model: ch
-    });
+var Yup = __importStar(require("yup"));
+
+var Permissions = function Permissions(_ref) {
+  var permissions = _ref.permissions;
+  return permissions.map(function (permission, key) {
+    return react_1.default.createElement("div", null, react_1.default.createElement("label", {
+      htmlFor: key
+    }, key), react_1.default.createElement("input", {
+      type: "checkbox",
+      id: key,
+      name: key,
+      defaultValue: permission
+    }));
   });
-  return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Characteristics"), characteristics);
 };
 
-exports.default = Characteristics;
-},{"react":"../../node_modules/react/index.js"}],"components/Params/Service.tsx":[function(require,module,exports) {
+var Properties = function Properties(_ref2) {
+  var properties = _ref2.properties;
+  return properties.map(function (prop, key) {
+    return react_1.default.createElement("div", null, react_1.default.createElement("label", {
+      htmlFor: key
+    }, key), react_1.default.createElement("input", {
+      type: "checkbox",
+      id: key,
+      name: key,
+      defaultValue: prop
+    }));
+  });
+};
+
+var Characteristic = function Characteristic(_ref3) {
+  var characteristic = _ref3.characteristic;
+  return react_1.default.createElement(formik_1.Formik, {
+    initialValues: characteristic,
+    onSubmit: function onSubmit(values, _ref4) {
+      var setSubmitting = _ref4.setSubmitting;
+      setTimeout(function () {
+        alert(JSON.stringify(values, null, 2));
+        setSubmitting(false);
+      }, 500);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required("Required")
+    })
+  }, function (props) {
+    var values = props.values,
+        touched = props.touched,
+        errors = props.errors,
+        dirty = props.dirty,
+        isSubmitting = props.isSubmitting,
+        handleChange = props.handleChange,
+        handleBlur = props.handleBlur,
+        handleSubmit = props.handleSubmit,
+        handleReset = props.handleReset;
+    return react_1.default.createElement("form", {
+      onSubmit: handleSubmit
+    }, react_1.default.createElement("label", {
+      htmlFor: "uuid"
+    }, "UUID"), react_1.default.createElement("input", {
+      type: "text",
+      id: "uuid",
+      defaultValue: values.uuid
+    }), react_1.default.createElement("h3", null, "Service Properties"), react_1.default.createElement(Properties, {
+      properties: values.properties
+    }), react_1.default.createElement("h3", null, "Permisions"), react_1.default.createElement(Permissions, {
+      permissions: values.permissions
+    }));
+  });
+};
+
+exports.default = Characteristic;
+},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","yup":"../../node_modules/yup/lib/index.js"}],"components/Params/Service.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../../ts/index.d.ts" />
 /// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -64175,11 +64234,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var react_1 = __importStar(require("react"));
 
-var formik_1 = require("formik");
+var react_router_dom_1 = require("react-router-dom");
 
-var Yup = __importStar(require("yup"));
-
-var Characteristics_1 = __importDefault(require("./Characteristics"));
+var Characteristic_1 = __importDefault(require("./Characteristic"));
 
 var ServiceOption = function ServiceOption(_ref) {
   var type = _ref.type,
@@ -64194,61 +64251,48 @@ var ServiceOption = function ServiceOption(_ref) {
   }));
 };
 
+var CharacteristicRoutes = function CharacteristicRoutes(_ref2) {
+  var characteristics = _ref2.characteristics;
+  console.log("cs=", characteristics);
+  return characteristics.map(function (ch, index) {
+    console.log(ch.uuid);
+    return react_1.default.createElement(react_router_dom_1.Route, {
+      key: index,
+      path: "/test/parameters/service/charateristic/:uuid",
+      render: function render(e) {
+        react_1.default.createElement(Characteristic_1.default, {
+          characteristic: ch
+        });
+      }
+    });
+  });
+};
+
+var CharacteristicLinks = function CharacteristicLinks(_ref3) {
+  var characteristics = _ref3.characteristics;
+  return characteristics.map(function (ch, index) {
+    return react_1.default.createElement(react_router_dom_1.Link, {
+      key: index,
+      to: "/test/parameters/service/characteristic/".concat(ch.uuid)
+    }, ch.uuid);
+  });
+};
+
 var ServiceOptions = function ServiceOptions(serviceModel) {
   var _react_1$useState = react_1.useState(null),
       _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
       currentCharacteristic = _react_1$useState2[0],
       setCurrentCharacteristic = _react_1$useState2[1];
 
-  return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Service Params"), react_1.default.createElement(formik_1.Formik, {
-    initialValues: {
-      name: serviceModel.service,
-      characteristics: serviceModel.characteristics
-    },
-    onSubmit: function onSubmit(values, _ref2) {
-      var setSubmitting = _ref2.setSubmitting;
-      setTimeout(function () {
-        alert(JSON.stringify(values, null, 2));
-        setSubmitting(false);
-      }, 500);
-    },
-    validationSchema: Yup.object().shape({
-      name: Yup.string().required("Required")
-    })
-  }, function (props) {
-    var values = props.values,
-        touched = props.touched,
-        errors = props.errors,
-        dirty = props.dirty,
-        isSubmitting = props.isSubmitting,
-        handleChange = props.handleChange,
-        handleBlur = props.handleBlur,
-        handleSubmit = props.handleSubmit,
-        handleReset = props.handleReset;
-    console.log("chars", values.characteristics); // const ServiceParams = values.properties.map((name, value) => (
-    //   <ServiceOption name={name} value={value} type={"properties"} />
-    // ));
-    // const ServicePermissions = values.permissions.map((name, value) => (
-    //   <ServiceOption name={name} value={value} type={"permissions"} />
-    // ));
-
-    return react_1.default.createElement("form", {
-      onSubmit: handleSubmit
-    }, react_1.default.createElement("label", {
-      htmlFor: "serviceName"
-    }, "Service Name"), react_1.default.createElement("input", {
-      type: "text",
-      id: "serviceName",
-      defaultValue: values.name
-    }), react_1.default.createElement(Characteristics_1.default, {
-      model: values.characteristics,
-      setCurrentCharacteristic: setCurrentCharacteristic
-    }));
+  return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Service Params"), react_1.default.createElement(CharacteristicRoutes, {
+    characteristics: serviceModel.characteristics
+  }), react_1.default.createElement(CharacteristicLinks, {
+    characteristics: serviceModel.characteristics
   }));
 };
 
 exports.default = ServiceOptions;
-},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","yup":"../../node_modules/yup/lib/index.js","./Characteristics":"components/Params/Characteristics.tsx"}],"models/Characteristic.ts":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","./Characteristic":"components/Params/Characteristic.tsx"}],"models/Characteristic.ts":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -64706,7 +64750,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39597" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42727" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

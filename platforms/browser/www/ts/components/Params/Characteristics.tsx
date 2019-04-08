@@ -3,12 +3,17 @@
 
 import React from "react";
 
-const Characteristic = (model: BluetoothlePlugin.Characteristic) => {
-  return <button>uuid: {model.uuid}</button>;
+const Characteristic = ({ model, setCurrentCharacteristic }) => {
+  console.log("cmodel", model);
+  return (
+    <button onClick={e => setCurrentCharacteristic(model.uuid)}>
+      uuid: {model.uuid}
+    </button>
+  );
 };
 
-const Characteristics = (model: BluetoothlePlugin.Characteristic[]) => {
-  const characteristics = model.map(ch => <Characteristic model={ch} />);
+const Characteristics = ({ model, setCurrentCharacteristic }) => {
+  const characteristics = model.map(ch => <Characteristic model={...ch} />);
   return (
     <div>
       <h1>Characteristics</h1>

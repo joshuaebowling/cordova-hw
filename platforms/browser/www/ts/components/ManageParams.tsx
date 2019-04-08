@@ -11,7 +11,7 @@ const model: Params.initService = Model();
 const ManageParams: Components.ServiceParams = ({ initParams }) => {
   return (
     <div>
-      <Service serviceModel={model} />
+      <Service {...model} />
     </div>
   );
 };

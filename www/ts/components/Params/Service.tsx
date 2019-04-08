@@ -2,10 +2,10 @@
 /// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
 import React, { useState } from "react";
-import { Formik, FieldArray } from "formik";
-import * as Yup from "yup";
+import { Link, Route } from "react-router-dom";
 
 import Characteristics from "./Characteristics";
+import Characteristic from "./Characteristic";
 
 const ServiceOption = ({ type, name, value }) => {
   return (
@@ -16,61 +16,36 @@ const ServiceOption = ({ type, name, value }) => {
   );
 };
 
+const CharacteristicRoutes = ({ characteristics }) => {
+  console.log("cs=", characteristics);
+  return characteristics.map((ch, index) => {
+    console.log(ch.uuid);
+    return (
+      <Route
+        key={index}
+        path="/test/parameters/service/charateristic/:uuid"
+        render={e => {
+          <Characteristic characteristic={ch} />;
+        }}
+      />
+    );
+  });
+};
+
+const CharacteristicLinks = ({ characteristics }) => {
+  return characteristics.map((ch, index) => (
+    <Link key={index} to={`/test/parameters/service/characteristic/${ch.uuid}`}>
+      {ch.uuid}
+    </Link>
+  ));
+};
 const ServiceOptions = (serviceModel: Params.initService) => {
   const [currentCharacteristic, setCurrentCharacteristic] = useState(null);
   return (
     <div>
       <h1>Service Params</h1>
-      <Formik
-        initialValues={{
-          name: serviceModel.service,
-          characteristics: serviceModel.characteristics
-        }}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(false);
-          }, 500);
-        }}
-        validationSchema={Yup.object().shape({
-          name: Yup.string().required("Required")
-        })}
-      >
-        {props => {
-          const {
-            values,
-            touched,
-            errors,
-            dirty,
-            isSubmitting,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            handleReset
-          } = props;
-          console.log("chars", values.characteristics);
-          // const ServiceParams = values.properties.map((name, value) => (
-          //   <ServiceOption name={name} value={value} type={"properties"} />
-          // ));
-          // const ServicePermissions = values.permissions.map((name, value) => (
-          //   <ServiceOption name={name} value={value} type={"permissions"} />
-          // ));
-          return (
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="serviceName">Service Name</label>
-              <input type="text" id="serviceName" defaultValue={values.name} />
-              <Characteristics
-                model={...values.characteristics}
-                setCurrentCharacteristic={setCurrentCharacteristic}
-              />
-              {/* <h3>Service Params</h3>
-              {ServiceParams}
-              <h3>Permisions</h3>
-              {ServicePermissions} */}
-            </form>
-          );
-        }}
-      </Formik>
+      <CharacteristicRoutes characteristics={...serviceModel.characteristics} />
+      <CharacteristicLinks characteristics={...serviceModel.characteristics} />
     </div>
   );
 };
