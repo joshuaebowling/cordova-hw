@@ -122,6 +122,10 @@ base64-js@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.0.tgz#a39992d723584811982be5e290bb6a53d86700f1"
 
+basil@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/basil/-/basil-0.0.5.tgz#a19bcd267f46e176af86b04a2bd7bf885681ff9a"
+
 big-integer@^1.6.7:
   version "1.6.36"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.36.tgz#78631076265d4ae3555c04f85e7d9d2f3a071a36"

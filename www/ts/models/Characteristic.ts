@@ -5,7 +5,7 @@ import { clone } from "lodash";
 
 const Characteristic: BluetoothlePlugin.Characteristic = {
   // this is only characteristic!!!
-  uuid: "ABCD",
+  uuid: "uuid",
   permissions: {
     read: true,
     write: true,

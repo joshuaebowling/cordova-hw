@@ -24,6 +24,15 @@ declare namespace Services {
     startAdvertising(params: Params.advertising): Promise<{ status: Status }>;
     advertise(params: Params.advertise): Promise<any>;
   }
+  interface ICharacteristicStore {
+    find(crit: string | number): BluetoothlePlugin.Characteristic;
+    createModel(): BluetoothlePlugin.Characteristic;
+    update(snip: BluetoothlePlugin.Characteristic): void;
+    getIndex(snip: BluetoothlePlugin.Characteristic): number;
+    remove(snip: BluetoothlePlugin.Characteristic): void;
+    fetch(): Array<BluetoothlePlugin.Characteristic>;
+    reset(): void;
+  }
 }
 
 declare namespace Response {
