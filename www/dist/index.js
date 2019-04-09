@@ -64131,30 +64131,32 @@ var formik_1 = require("formik");
 
 var Yup = __importStar(require("yup"));
 
+var lodash_1 = require("lodash");
+
 var Permissions = function Permissions(_ref) {
   var permissions = _ref.permissions;
-  return permissions.map(function (permission, key) {
+  return lodash_1.map(permissions, function (permission, key) {
     return react_1.default.createElement("div", null, react_1.default.createElement("label", {
       htmlFor: key
     }, key), react_1.default.createElement("input", {
       type: "checkbox",
       id: key,
       name: key,
-      defaultValue: permission
+      checked: permission
     }));
   });
 };
 
 var Properties = function Properties(_ref2) {
   var properties = _ref2.properties;
-  return properties.map(function (prop, key) {
+  return lodash_1.map(properties, function (prop, key) {
     return react_1.default.createElement("div", null, react_1.default.createElement("label", {
       htmlFor: key
     }, key), react_1.default.createElement("input", {
       type: "checkbox",
       id: key,
       name: key,
-      defaultValue: prop
+      checked: prop
     }));
   });
 };
@@ -64200,7 +64202,7 @@ var Characteristic = function Characteristic(_ref3) {
 };
 
 exports.default = Characteristic;
-},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","yup":"../../node_modules/yup/lib/index.js"}],"components/Params/Service.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","yup":"../../node_modules/yup/lib/index.js","lodash":"../../node_modules/lodash/lodash.js"}],"components/Params/Service.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../../ts/index.d.ts" />
 /// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -64253,14 +64255,12 @@ var ServiceOption = function ServiceOption(_ref) {
 
 var CharacteristicRoutes = function CharacteristicRoutes(_ref2) {
   var characteristics = _ref2.characteristics;
-  console.log("cs=", characteristics);
   return characteristics.map(function (ch, index) {
-    console.log(ch.uuid);
     return react_1.default.createElement(react_router_dom_1.Route, {
       key: index,
-      path: "/test/parameters/service/charateristic/:uuid",
+      path: "/test/parameters/service/characteristic/:uuid",
       render: function render(e) {
-        react_1.default.createElement(Characteristic_1.default, {
+        return react_1.default.createElement(Characteristic_1.default, {
           characteristic: ch
         });
       }
@@ -64284,9 +64284,9 @@ var ServiceOptions = function ServiceOptions(serviceModel) {
       currentCharacteristic = _react_1$useState2[0],
       setCurrentCharacteristic = _react_1$useState2[1];
 
-  return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Service Params"), react_1.default.createElement(CharacteristicRoutes, {
+  return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Service Params for ", serviceModel.service), react_1.default.createElement("h2", null, "Characteristics"), react_1.default.createElement(CharacteristicLinks, {
     characteristics: serviceModel.characteristics
-  }), react_1.default.createElement(CharacteristicLinks, {
+  }), react_1.default.createElement(CharacteristicRoutes, {
     characteristics: serviceModel.characteristics
   }));
 };

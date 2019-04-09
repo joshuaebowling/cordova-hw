@@ -2,22 +2,23 @@ import React from "react";
 
 import { Formik, FieldArray } from "formik";
 import * as Yup from "yup";
+import { map } from "lodash";
 
 const Permissions = ({ permissions }) => {
-  return permissions.map((permission, key) => (
+  return map(permissions, (permission, key) => (
     <div>
       <label htmlFor={key}>{key}</label>
-      <input type="checkbox" id={key} name={key} defaultValue={permission} />
+      <input type="checkbox" id={key} name={key} checked={permission} />
     </div>
   ));
 };
 
 const Properties = ({ properties }) => {
-  return properties.map((prop, key) => {
+  return map(properties, (prop, key) => {
     return (
       <div>
         <label htmlFor={key}>{key}</label>
-        <input type="checkbox" id={key} name={key} defaultValue={prop} />
+        <input type="checkbox" id={key} name={key} checked={prop} />
       </div>
     );
   });

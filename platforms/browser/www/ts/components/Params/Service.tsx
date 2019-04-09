@@ -17,19 +17,26 @@ const ServiceOption = ({ type, name, value }) => {
 };
 
 const CharacteristicRoutes = ({ characteristics }) => {
-  return characteristics.forEach(ch => (
-    <Route
-      path="/test/parameters/service/charateristic/:uuid"
-      render={e => {
-        <Characteristic characteristic={ch} />;
-      }}
-    />
-  ));
+  console.log("cs=", characteristics);
+  return characteristics.map((ch, index) => {
+    console.log(ch.uuid);
+    return (
+      <Route
+        key={index}
+        path="/test/parameters/service/characteristic/:uuid"
+        render={e => {
+          <Characteristic characteristic={ch} />;
+        }}
+      />
+    );
+  });
 };
 
 const CharacteristicLinks = ({ characteristics }) => {
-  return characteristics.forEach(ch => (
-    <Link to={`/test/parameters/service/characteristic/${ch.uuid}`} />
+  return characteristics.map((ch, index) => (
+    <Link key={index} to={`/test/parameters/service/characteristic/${ch.uuid}`}>
+      {ch.uuid}
+    </Link>
   ));
 };
 const ServiceOptions = (serviceModel: Params.initService) => {

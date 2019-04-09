@@ -64253,9 +64253,12 @@ var ServiceOption = function ServiceOption(_ref) {
 
 var CharacteristicRoutes = function CharacteristicRoutes(_ref2) {
   var characteristics = _ref2.characteristics;
-  return characteristics.forEach(function (ch) {
+  console.log("cs=", characteristics);
+  return characteristics.map(function (ch, index) {
+    console.log(ch.uuid);
     return react_1.default.createElement(react_router_dom_1.Route, {
-      path: "/test/parameters/service/charateristic/:uuid",
+      key: index,
+      path: "/test/parameters/service/characteristic/:uuid",
       render: function render(e) {
         react_1.default.createElement(Characteristic_1.default, {
           characteristic: ch
@@ -64267,10 +64270,11 @@ var CharacteristicRoutes = function CharacteristicRoutes(_ref2) {
 
 var CharacteristicLinks = function CharacteristicLinks(_ref3) {
   var characteristics = _ref3.characteristics;
-  return characteristics.forEach(function (ch) {
+  return characteristics.map(function (ch, index) {
     return react_1.default.createElement(react_router_dom_1.Link, {
+      key: index,
       to: "/test/parameters/service/characteristic/".concat(ch.uuid)
-    });
+    }, ch.uuid);
   });
 };
 
