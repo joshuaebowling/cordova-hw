@@ -17,15 +17,13 @@ const ServiceOption = ({ type, name, value }) => {
 };
 
 const CharacteristicRoutes = ({ characteristics }) => {
-  console.log("cs=", characteristics);
   return characteristics.map((ch, index) => {
-    console.log(ch.uuid);
     return (
       <Route
         key={index}
         path="/test/parameters/service/characteristic/:uuid"
         render={e => {
-          <Characteristic characteristic={ch} />;
+          return <Characteristic characteristic={...ch} />;
         }}
       />
     );
@@ -43,9 +41,11 @@ const ServiceOptions = (serviceModel: Params.initService) => {
   const [currentCharacteristic, setCurrentCharacteristic] = useState(null);
   return (
     <div>
-      <h1>Service Params</h1>
-      <CharacteristicRoutes characteristics={...serviceModel.characteristics} />
+      <h1>Service Params for {serviceModel.service}</h1>
+
+      <h2>Characteristics</h2>
       <CharacteristicLinks characteristics={...serviceModel.characteristics} />
+      <CharacteristicRoutes characteristics={...serviceModel.characteristics} />
     </div>
   );
 };

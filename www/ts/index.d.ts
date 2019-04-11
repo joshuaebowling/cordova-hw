@@ -33,6 +33,15 @@ declare namespace Services {
     fetch(): Array<BluetoothlePlugin.Characteristic>;
     reset(): void;
   }
+  interface IServiceParamStore {
+    find(crit: string | number): Params.initService;
+    createModel(): Params.initService;
+    update(snip: Params.initService): void;
+    getIndex(snip: Params.initService): number;
+    remove(snip: Params.initService): void;
+    fetch(): Array<Params.initService>;
+    reset(): void;
+  }
 }
 
 declare namespace Response {
