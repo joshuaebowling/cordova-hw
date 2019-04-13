@@ -3,7 +3,6 @@ import { NavLink, Route } from "react-router-dom";
 import { assign } from "lodash";
 import bluetoothSerial from "../services/bluetoothSerial";
 import StatusChecker from "./StatusChecker";
-import ManageParams from "./ManageParams";
 
 const ENABLE_STATUS = {
   NO: 0,
@@ -17,22 +16,22 @@ const initialState = {
   discoverable: false
 };
 
-const reducer: Function = (state:object, action: object) => {
+const reducer: Function = (state: object, action: object) => {
   const stateAddition = {};
-  switch(action.type) {
+  switch (action.type) {
     case actions.ENABLE_RQ:
       stateAddition.enabled = ENABLE_STATUS.TRYING;
       stateAddition.error = null;
-    break;
+      break;
     case actions.ENABLE_RS:
       stateAddition.enabled = action.payload;
-    break;
+      break;
     case actions.ENABLED_STATUS_RQ:
       stateAddition.enabled = action.payload;
       break;
     case actions.ERROR:
       stateAddition.error = action.payload;
-    break;
+      break;
     case actions.DISCOVERABLE_RQ:
       stateAddition.discoverable = true;
       break;
@@ -51,107 +50,129 @@ const actions = {
   DISCOVERABLE_RQ: "DISCOVERABLE_RQ",
   UNDISCOVERABLE_RQ: "UNDISCOVERABLE_RQ",
   enable: () => (dispatch: Function) => {
-    dispatch({type: actions.ENABLE_RQ, payload: null});
-    const catcher = (err) => {
-      dispatch({type: actions.ENABLE_RS, payload: ENABLE_STATUS.NO});
-      dispatch({type: actions.ERROR, payload: 'hopefully some error info'});
+    dispatch({ type: actions.ENABLE_RQ, payload: null });
+    const catcher = err => {
+      dispatch({ type: actions.ENABLE_RS, payload: ENABLE_STATUS.NO });
+      dispatch({ type: actions.ERROR, payload: "hopefully some error info" });
     };
-    bluetoothSerial.enable()
+    bluetoothSerial
+      .enable()
       .then(() => {
-        bluetoothSerial.isEnabled()
-        .then((isEnabled) => {
-          dispatch({ type: actions.ENABLE_RS, payload: isEnabled ?  ENABLE_STATUS.YES : ENABLE_STATUS.NO });
-        })
-        .catch(catcher)
+        bluetoothSerial
+          .isEnabled()
+          .then(isEnabled => {
+            dispatch({
+              type: actions.ENABLE_RS,
+              payload: isEnabled ? ENABLE_STATUS.YES : ENABLE_STATUS.NO
+            });
+          })
+          .catch(catcher);
       })
-      .catch(catcher)
-    ;
+      .catch(catcher);
   },
   setDiscoverable: () => (dispatch: Function) => {
     bluetoothSerial.setDiscoverable();
-    dispatch({type: actions.DISCOVERABLE_RQ, payload: null});
+    dispatch({ type: actions.DISCOVERABLE_RQ, payload: null });
     setTimeout(() => {
-      dispatch({type: actions.UNDISCOVERABLE_RQ, payload: null});
+      dispatch({ type: actions.UNDISCOVERABLE_RQ, payload: null });
     }, 120 * 1000);
   },
   isEnabled: () => (dispatch: Function) => {
     setTimeout(() => {
-      console.log('timeout');
-      bluetoothSerial.isEnabled()
-      .then((isEnabled) => {
-        dispatch({ type: actions.ENABLE_RS, payload: isEnabled ?  ENABLE_STATUS.YES : ENABLE_STATUS.NO });
-      })
-      .catch(() => {
-        dispatch({type: actions.ENABLE_RS, payload: ENABLE_STATUS.NO});
-      })
-  
+      console.log("timeout");
+      bluetoothSerial
+        .isEnabled()
+        .then(isEnabled => {
+          dispatch({
+            type: actions.ENABLE_RS,
+            payload: isEnabled ? ENABLE_STATUS.YES : ENABLE_STATUS.NO
+          });
+        })
+        .catch(() => {
+          dispatch({ type: actions.ENABLE_RS, payload: ENABLE_STATUS.NO });
+        });
     }, 3000);
   },
   updateEnabledStatus: (enabled: boolean) => (dispatch: Function) => {
-    dispatch({type: actions.ENABLED_STATUS_RQ, payload: enabled});
+    dispatch({ type: actions.ENABLED_STATUS_RQ, payload: enabled });
   }
-
 };
 
 const BluetoothIsEnabled = () => {
-  return(<p>Bluetooth is Enabled</p>);
+  return <p>Bluetooth is Enabled</p>;
 };
 
 const IsDiscoverable = () => {
-  return(<p>Bluetooth is Discoverable</p>);
+  return <p>Bluetooth is Discoverable</p>;
 };
 
-
-const Enable = ({isEnabled, dispatch}) => {
-  return(
-    isEnabled === ENABLE_STATUS.YES ?
+const Enable = ({ isEnabled, dispatch }) => {
+  return isEnabled === ENABLE_STATUS.YES ? (
     <BluetoothIsEnabled />
-    :
-  <div>
-    <p>Enable</p>
-    <button enabled={(isEnabled === ENABLE_STATUS.NO).toString()} onClick={e => actions.enable()(dispatch)}>Enable</button>
-  </div>
+  ) : (
+    <div>
+      <p>Enable</p>
+      <button
+        enabled={(isEnabled === ENABLE_STATUS.NO).toString()}
+        onClick={e => actions.enable()(dispatch)}
+      >
+        Enable
+      </button>
+    </div>
   );
-}
+};
 
-const Discoverable = ({isDiscoverable, dispatch}) => {
-  if(isDiscoverable) {
-    return (<IsDiscoverable />)
+const Discoverable = ({ isDiscoverable, dispatch }) => {
+  if (isDiscoverable) {
+    return <IsDiscoverable />;
   } else {
-    return(
+    return (
       <div>
         <p>Make Discoverable</p>
-        <button enabled={!isDiscoverable} onClick={e => actions.setDiscoverable()(dispatch) }>Discoverable</button>
-     </div>
+        <button
+          enabled={!isDiscoverable}
+          onClick={e => actions.setDiscoverable()(dispatch)}
+        >
+          Discoverable
+        </button>
+      </div>
     );
   }
 };
 
-const EnabledDiscoverable = ({isEnabled, isDiscoverable, dispatch}) => {
-  if(isEnabled) {
-    return (<Discoverable isDiscoverable={isDiscoverable} dispatch={dispatch} />)
+const EnabledDiscoverable = ({ isEnabled, isDiscoverable, dispatch }) => {
+  if (isEnabled) {
+    return <Discoverable isDiscoverable={isDiscoverable} dispatch={dispatch} />;
   } else {
-    return (<span />)
+    return <span />;
   }
+};
 
-}
-
-const EnableError = memo(({errorInfo}) => {
-  return (errorInfo === null ? <span></span> : <p>{errorInfo}</p>);
+const EnableError = memo(({ errorInfo }) => {
+  return errorInfo === null ? <span /> : <p>{errorInfo}</p>;
 });
 export default () => {
- const [state, dispatch] = useReducer(reducer, initialState);
- return (
-   <div>
-     <div>
-       <NavLink to="/test/parameters">Parameters</NavLink>
-       <Enable isEnabled={state.enabled} dispatch={dispatch} />
-       <EnableError errorInfo={state.error} />
-       <p>Discovery</p>
-       <button onClick={e => console.log('discover')}>Discover</button>
-       <EnabledDiscoverable isEnabled={state.enabled} isDiscoverable={state.discoverable} dispatch={dispatch} />
-       <StatusChecker onAsyncCallComplete={(enabled) => { actions.updateEnabledStatus(enabled)(dispatch);  }} asyncCall={() => actions.isEnabled()(dispatch)} />
-       <Route path="/test/parameters" render={() => <ManageParams />} />
-     </div>
-   </div>)
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <div>
+      <div>
+        <NavLink to="/parameters">Parameters</NavLink>
+        <Enable isEnabled={state.enabled} dispatch={dispatch} />
+        <EnableError errorInfo={state.error} />
+        <p>Discovery</p>
+        <button onClick={e => console.log("discover")}>Discover</button>
+        <EnabledDiscoverable
+          isEnabled={state.enabled}
+          isDiscoverable={state.discoverable}
+          dispatch={dispatch}
+        />
+        <StatusChecker
+          onAsyncCallComplete={enabled => {
+            actions.updateEnabledStatus(enabled)(dispatch);
+          }}
+          asyncCall={() => actions.isEnabled()(dispatch)}
+        />
+      </div>
+    </div>
+  );
 };

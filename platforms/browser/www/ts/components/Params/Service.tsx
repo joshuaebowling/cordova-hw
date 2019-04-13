@@ -4,6 +4,8 @@
 import React, { useState } from "react";
 import { Link, Route } from "react-router-dom";
 
+import CharacteristicStore from "../../services/CharacteristicStore";
+
 import Characteristics from "./Characteristics";
 import Characteristic from "./Characteristic";
 
@@ -38,7 +40,6 @@ const CharacteristicLinks = ({ characteristics }) => {
   ));
 };
 const ServiceOptions = (serviceModel: Params.initService) => {
-  const [currentCharacteristic, setCurrentCharacteristic] = useState(null);
   return (
     <div>
       <h1>Service Params for {serviceModel.service}</h1>
