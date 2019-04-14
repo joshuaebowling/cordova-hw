@@ -39,7 +39,32 @@ const CharacteristicLinks = ({ characteristics }) => {
     </Link>
   ));
 };
+
+const ServiceNameEditor = ({ name }) => {
+  const [serviceName, setServiceName] = useState(name);
+};
+
+const ServiceName = ({ name }) => {
+  if (name === "") {
+    let [serviceName, setServiceName] = useState(name);
+    return (
+      <React.Fragment>
+        <label htmlFor="serviceName">Service Name</label>
+        <input
+          type="text"
+          id="serviceName"
+          defaultValue={serviceName}
+          onChange={e => setServiceName(e.target.value)}
+        />
+      </React.Fragment>
+    );
+  } else {
+    return <h3>Service {name}</h3>;
+  }
+};
+
 const ServiceOptions = (serviceModel: Params.initService) => {
+  const [serviceName, setServiceName] = useState(serviceModel.service);
   return (
     <div>
       <h1>Service Params for {serviceModel.service}</h1>

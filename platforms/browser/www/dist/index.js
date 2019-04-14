@@ -29648,141 +29648,7 @@ if ("development" !== "production") {
     style: _propTypes.default.object
   });
 }
-},{"@babel/runtime/helpers/esm/inheritsLoose":"../../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../../node_modules/react/index.js","react-router":"../../node_modules/react-router-dom/node_modules/react-router/esm/react-router.js","history":"../../node_modules/history/esm/history.js","prop-types":"../../node_modules/prop-types/index.js","tiny-warning":"../../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
-var bundleURL = null;
-
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
-
-  return bundleURL;
-}
-
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error();
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^)\n]+/g);
-
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
-
-  return '/';
-}
-
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^/]+$/, '$1') + '/';
-}
-
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-},{}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
-var bundle = require('./bundle-url');
-
-function updateLink(link) {
-  var newLink = link.cloneNode();
-
-  newLink.onload = function () {
-    link.remove();
-  };
-
-  newLink.href = link.href.split('?')[0] + '?' + Date.now();
-  link.parentNode.insertBefore(newLink, link.nextSibling);
-}
-
-var cssTimeout = null;
-
-function reloadCSS() {
-  if (cssTimeout) {
-    return;
-  }
-
-  cssTimeout = setTimeout(function () {
-    var links = document.querySelectorAll('link[rel="stylesheet"]');
-
-    for (var i = 0; i < links.length; i++) {
-      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
-        updateLink(links[i]);
-      }
-    }
-
-    cssTimeout = null;
-  }, 50);
-}
-
-module.exports = reloadCSS;
-},{"./bundle-url":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"../../node_modules/redux-notifications/lib/styles.css":[function(require,module,exports) {
-
-        var reloadCSS = require('_css_loader');
-        module.hot.dispose(reloadCSS);
-        module.hot.accept(reloadCSS);
-      
-},{"_css_loader":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/views/connect.tsx":[function(require,module,exports) {
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var __importStar = this && this.__importStar || function (mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) for (var k in mod) {
-    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-  }
-  result["default"] = mod;
-  return result;
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var react_1 = __importStar(require("react"));
-
-require("redux-notifications/lib/styles.css");
-
-var ConnectView =
-/*#__PURE__*/
-function (_react_1$Component) {
-  _inherits(ConnectView, _react_1$Component);
-
-  function ConnectView() {
-    _classCallCheck(this, ConnectView);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(ConnectView).apply(this, arguments));
-  }
-
-  _createClass(ConnectView, [{
-    key: "render",
-    value: function render() {
-      return react_1.default.createElement("div", null);
-    }
-  }]);
-
-  return ConnectView;
-}(react_1.Component);
-
-exports.default = ConnectView;
-},{"react":"../../node_modules/react/index.js","redux-notifications/lib/styles.css":"../../node_modules/redux-notifications/lib/styles.css"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/base64-js/index.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/inheritsLoose":"../../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../../node_modules/react/index.js","react-router":"../../node_modules/react-router-dom/node_modules/react-router/esm/react-router.js","history":"../../node_modules/history/esm/history.js","prop-types":"../../node_modules/prop-types/index.js","tiny-warning":"../../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/base64-js/index.js":[function(require,module,exports) {
 'use strict'
 
 exports.byteLength = byteLength
@@ -48933,215 +48799,7 @@ var define;
   }
 }.call(this));
 
-},{"buffer":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/buffer/index.js"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
-/*global cordova*/
-module.exports = {
-
-    connect: function (macAddress, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "connect", [macAddress]);
-    },
-
-    // Android only - see http://goo.gl/1mFjZY
-    connectInsecure: function (macAddress, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "connectInsecure", [macAddress]);
-    },
-
-    disconnect: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "disconnect", []);
-    },
-
-    // list bound devices
-    list: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "list", []);
-    },
-
-    isEnabled: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "isEnabled", []);
-    },
-
-    isConnected: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "isConnected", []);
-    },
-
-    // the number of bytes of data available to read is passed to the success function
-    available: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "available", []);
-    },
-
-    // read all the data in the buffer
-    read: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "read", []);
-    },
-
-    // reads the data in the buffer up to and including the delimiter
-    readUntil: function (delimiter, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "readUntil", [delimiter]);
-    },
-
-    // writes data to the bluetooth serial port
-    // data can be an ArrayBuffer, string, integer array, or Uint8Array
-    write: function (data, success, failure) {
-
-        // convert to ArrayBuffer
-        if (typeof data === 'string') {
-            data = stringToArrayBuffer(data);
-        } else if (data instanceof Array) {
-            // assuming array of interger
-            data = new Uint8Array(data).buffer;
-        } else if (data instanceof Uint8Array) {
-            data = data.buffer;
-        }
-
-        cordova.exec(success, failure, "BluetoothSerial", "write", [data]);
-    },
-
-    // calls the success callback when new data is available
-    subscribe: function (delimiter, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "subscribe", [delimiter]);
-    },
-
-    // removes data subscription
-    unsubscribe: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "unsubscribe", []);
-    },
-
-    // calls the success callback when new data is available with an ArrayBuffer
-    subscribeRawData: function (success, failure) {
-
-        successWrapper = function(data) {
-            // Windows Phone flattens an array of one into a number which
-            // breaks the API. Stuff it back into an ArrayBuffer.
-            if (typeof data === 'number') {
-                var a = new Uint8Array(1);
-                a[0] = data;
-                data = a.buffer;
-            }
-            success(data);
-        };
-        cordova.exec(successWrapper, failure, "BluetoothSerial", "subscribeRaw", []);
-    },
-
-    // removes data subscription
-    unsubscribeRawData: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "unsubscribeRaw", []);
-    },
-
-    // clears the data buffer
-    clear: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "clear", []);
-    },
-
-    // reads the RSSI of the *connected* peripherial
-    readRSSI: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "readRSSI", []);
-    },
-
-    showBluetoothSettings: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "showBluetoothSettings", []);
-    },
-
-    enable: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "enable", []);
-    },
-
-    discoverUnpaired: function (success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "discoverUnpaired", []);
-    },
-
-    setDeviceDiscoveredListener: function (notify) {
-        if (typeof notify != 'function')
-            throw 'BluetoothSerial.setDeviceDiscoveredListener: Callback not a function';
-
-        cordova.exec(notify, null, "BluetoothSerial", "setDeviceDiscoveredListener", []);
-    },
-
-    clearDeviceDiscoveredListener: function () {
-        cordova.exec(null, null, "BluetoothSerial", "clearDeviceDiscoveredListener", []);
-    },
-
-    setName: function (newName) {
-        cordova.exec(null, null, "BluetoothSerial", "setName", [newName]);
-    },
-
-    setDiscoverable: function (discoverableDuration) {
-        cordova.exec(null, null, "BluetoothSerial", "setDiscoverable", [discoverableDuration]);
-    }
-
-
-};
-
-var stringToArrayBuffer = function(str) {
-    var ret = new Uint8Array(str.length);
-    for (var i = 0; i < str.length; i++) {
-        ret[i] = str.charCodeAt(i);
-    }
-    return ret.buffer;
-};
-
-},{}],"services/bluetoothSerial.ts":[function(require,module,exports) {
-"use strict"; /// <reference path="../index.d.ts" />
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var cordova_plugin_bluetooth_serial_1 = __importDefault(require("cordova-plugin-bluetooth-serial"));
-
-var bluetoothSerialWrapper = {
-  discover: function discover() {
-    return new Promise(function (resolve, reject) {
-      cordova_plugin_bluetooth_serial_1.default.discoverUnpaired;
-    });
-  },
-  enable: function enable() {
-    return new Promise(function (resolve, reject) {
-      cordova_plugin_bluetooth_serial_1.default.enable(resolve, reject);
-    });
-  },
-  isEnabled: function isEnabled() {
-    return new Promise(function (resolve, reject) {
-      cordova_plugin_bluetooth_serial_1.default.isEnabled(resolve, reject);
-    });
-  },
-  setDiscoverable: function setDiscoverable() {
-    return new Promise(function () {
-      cordova_plugin_bluetooth_serial_1.default.setDiscoverable(120);
-    });
-  }
-};
-exports.default = bluetoothSerialWrapper;
-},{"cordova-plugin-bluetooth-serial":"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js"}],"components/StatusChecker.tsx":[function(require,module,exports) {
-"use strict";
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var react_1 = __importDefault(require("react"));
-
-var StatusChecker = function StatusChecker(_ref) {
-  var asyncCall = _ref.asyncCall,
-      onAsyncCallComplete = _ref.onAsyncCallComplete;
-  asyncCall(function () {
-    onAsyncCallComplete();
-  });
-  return react_1.default.createElement("span", null);
-};
-
-exports.default = StatusChecker;
-},{"react":"../../node_modules/react/index.js"}],"../../node_modules/basil.js/build/basil.js":[function(require,module,exports) {
+},{"buffer":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/buffer/index.js"}],"../../node_modules/basil.js/build/basil.js":[function(require,module,exports) {
 var define;
 (function () {
 	// Basil
@@ -49682,8 +49340,6 @@ exports.default = result;
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
-function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -49701,8 +49357,7 @@ var react_router_dom_1 = require("react-router-dom");
 var ServiceParamStore_1 = __importDefault(require("../services/ServiceParamStore"));
 
 var Services = function Services(_ref) {
-  _objectDestructuringEmpty(_ref);
-
+  var match = _ref.match;
   var services = ServiceParamStore_1.default.fetch().map(function (svc) {
     return react_1.default.createElement("tr", null, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
       to: "/service/".concat(svc.service)
@@ -49720,7 +49375,7 @@ var Services = function Services(_ref) {
   };
 
   return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Services"), react_1.default.createElement(react_router_dom_1.Link, {
-    to: "/test/a"
+    to: "".concat(match.url, "/service_new")
   }, "Add New Service"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "Service Name"))), react_1.default.createElement("tbody", null, services)), services);
 };
 
@@ -64790,6 +64445,24 @@ exports.default = Characteristic;
 "use strict"; /// <reference path="../../../ts/index.d.ts" />
 /// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -64800,7 +64473,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var react_1 = __importDefault(require("react"));
+var react_1 = __importStar(require("react"));
 
 var react_router_dom_1 = require("react-router-dom");
 
@@ -64844,7 +64517,45 @@ var CharacteristicLinks = function CharacteristicLinks(_ref3) {
   });
 };
 
+var ServiceNameEditor = function ServiceNameEditor(_ref4) {
+  var name = _ref4.name;
+
+  var _react_1$useState = react_1.useState(name),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      serviceName = _react_1$useState2[0],
+      setServiceName = _react_1$useState2[1];
+};
+
+var ServiceName = function ServiceName(_ref5) {
+  var name = _ref5.name;
+
+  if (name === "") {
+    var _react_1$useState3 = react_1.useState(name),
+        _react_1$useState4 = _slicedToArray(_react_1$useState3, 2),
+        serviceName = _react_1$useState4[0],
+        setServiceName = _react_1$useState4[1];
+
+    return react_1.default.createElement(react_1.default.Fragment, null, react_1.default.createElement("label", {
+      htmlFor: "serviceName"
+    }, "Service Name"), react_1.default.createElement("input", {
+      type: "text",
+      id: "serviceName",
+      defaultValue: serviceName,
+      onChange: function onChange(e) {
+        return setServiceName(e.target.value);
+      }
+    }));
+  } else {
+    return react_1.default.createElement("h3", null, "Service ", name);
+  }
+};
+
 var ServiceOptions = function ServiceOptions(serviceModel) {
+  var _react_1$useState5 = react_1.useState(serviceModel.service),
+      _react_1$useState6 = _slicedToArray(_react_1$useState5, 2),
+      serviceName = _react_1$useState6[0],
+      setServiceName = _react_1$useState6[1];
+
   return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Service Params for ", serviceModel.service), react_1.default.createElement("h2", null, "Characteristics"), react_1.default.createElement(CharacteristicLinks, {
     characteristics: serviceModel.characteristics
   }), react_1.default.createElement(CharacteristicRoutes, {
@@ -64896,8 +64607,10 @@ var Service_1 = __importDefault(require("./Params/Service")); // const Service =
 
 
 var ManageParams = function ManageParams(_ref) {
-  var initParams = _ref.initParams;
-  return react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.Route, {
+  var match = _ref.match;
+  return react_1.default.createElement("div", null, react_1.default.createElement(Services_1.default, {
+    match: match
+  }), react_1.default.createElement(react_router_dom_1.Route, {
     path: "/service/:name",
     render: function render(_ref2) {
       var match = _ref2.match;
@@ -64909,7 +64622,7 @@ var ManageParams = function ManageParams(_ref) {
       });
     }
   }), react_1.default.createElement(react_router_dom_1.Route, {
-    path: "/test/a",
+    path: "".concat(match.url, "/service_new"),
     render: function render(_ref3) {
       var match = _ref3.match;
       console.log("matched");
@@ -64918,11 +64631,219 @@ var ManageParams = function ManageParams(_ref) {
         characteristics: []
       });
     }
-  }), react_1.default.createElement(Services_1.default, null));
+  }));
 };
 
 exports.default = ManageParams;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/ServiceParamStore":"services/ServiceParamStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx"}],"components/TestComponent.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/ServiceParamStore":"services/ServiceParamStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
+/*global cordova*/
+module.exports = {
+
+    connect: function (macAddress, success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "connect", [macAddress]);
+    },
+
+    // Android only - see http://goo.gl/1mFjZY
+    connectInsecure: function (macAddress, success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "connectInsecure", [macAddress]);
+    },
+
+    disconnect: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "disconnect", []);
+    },
+
+    // list bound devices
+    list: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "list", []);
+    },
+
+    isEnabled: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "isEnabled", []);
+    },
+
+    isConnected: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "isConnected", []);
+    },
+
+    // the number of bytes of data available to read is passed to the success function
+    available: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "available", []);
+    },
+
+    // read all the data in the buffer
+    read: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "read", []);
+    },
+
+    // reads the data in the buffer up to and including the delimiter
+    readUntil: function (delimiter, success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "readUntil", [delimiter]);
+    },
+
+    // writes data to the bluetooth serial port
+    // data can be an ArrayBuffer, string, integer array, or Uint8Array
+    write: function (data, success, failure) {
+
+        // convert to ArrayBuffer
+        if (typeof data === 'string') {
+            data = stringToArrayBuffer(data);
+        } else if (data instanceof Array) {
+            // assuming array of interger
+            data = new Uint8Array(data).buffer;
+        } else if (data instanceof Uint8Array) {
+            data = data.buffer;
+        }
+
+        cordova.exec(success, failure, "BluetoothSerial", "write", [data]);
+    },
+
+    // calls the success callback when new data is available
+    subscribe: function (delimiter, success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "subscribe", [delimiter]);
+    },
+
+    // removes data subscription
+    unsubscribe: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "unsubscribe", []);
+    },
+
+    // calls the success callback when new data is available with an ArrayBuffer
+    subscribeRawData: function (success, failure) {
+
+        successWrapper = function(data) {
+            // Windows Phone flattens an array of one into a number which
+            // breaks the API. Stuff it back into an ArrayBuffer.
+            if (typeof data === 'number') {
+                var a = new Uint8Array(1);
+                a[0] = data;
+                data = a.buffer;
+            }
+            success(data);
+        };
+        cordova.exec(successWrapper, failure, "BluetoothSerial", "subscribeRaw", []);
+    },
+
+    // removes data subscription
+    unsubscribeRawData: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "unsubscribeRaw", []);
+    },
+
+    // clears the data buffer
+    clear: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "clear", []);
+    },
+
+    // reads the RSSI of the *connected* peripherial
+    readRSSI: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "readRSSI", []);
+    },
+
+    showBluetoothSettings: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "showBluetoothSettings", []);
+    },
+
+    enable: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "enable", []);
+    },
+
+    discoverUnpaired: function (success, failure) {
+        cordova.exec(success, failure, "BluetoothSerial", "discoverUnpaired", []);
+    },
+
+    setDeviceDiscoveredListener: function (notify) {
+        if (typeof notify != 'function')
+            throw 'BluetoothSerial.setDeviceDiscoveredListener: Callback not a function';
+
+        cordova.exec(notify, null, "BluetoothSerial", "setDeviceDiscoveredListener", []);
+    },
+
+    clearDeviceDiscoveredListener: function () {
+        cordova.exec(null, null, "BluetoothSerial", "clearDeviceDiscoveredListener", []);
+    },
+
+    setName: function (newName) {
+        cordova.exec(null, null, "BluetoothSerial", "setName", [newName]);
+    },
+
+    setDiscoverable: function (discoverableDuration) {
+        cordova.exec(null, null, "BluetoothSerial", "setDiscoverable", [discoverableDuration]);
+    }
+
+
+};
+
+var stringToArrayBuffer = function(str) {
+    var ret = new Uint8Array(str.length);
+    for (var i = 0; i < str.length; i++) {
+        ret[i] = str.charCodeAt(i);
+    }
+    return ret.buffer;
+};
+
+},{}],"services/bluetoothSerial.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../index.d.ts" />
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var cordova_plugin_bluetooth_serial_1 = __importDefault(require("cordova-plugin-bluetooth-serial"));
+
+var bluetoothSerialWrapper = {
+  discover: function discover() {
+    return new Promise(function (resolve, reject) {
+      cordova_plugin_bluetooth_serial_1.default.discoverUnpaired;
+    });
+  },
+  enable: function enable() {
+    return new Promise(function (resolve, reject) {
+      cordova_plugin_bluetooth_serial_1.default.enable(resolve, reject);
+    });
+  },
+  isEnabled: function isEnabled() {
+    return new Promise(function (resolve, reject) {
+      cordova_plugin_bluetooth_serial_1.default.isEnabled(resolve, reject);
+    });
+  },
+  setDiscoverable: function setDiscoverable() {
+    return new Promise(function () {
+      cordova_plugin_bluetooth_serial_1.default.setDiscoverable(120);
+    });
+  }
+};
+exports.default = bluetoothSerialWrapper;
+},{"cordova-plugin-bluetooth-serial":"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js"}],"components/StatusChecker.tsx":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importDefault(require("react"));
+
+var StatusChecker = function StatusChecker(_ref) {
+  var asyncCall = _ref.asyncCall,
+      onAsyncCallComplete = _ref.onAsyncCallComplete;
+  asyncCall(function () {
+    onAsyncCallComplete();
+  });
+  return react_1.default.createElement("span", null);
+};
+
+exports.default = StatusChecker;
+},{"react":"../../node_modules/react/index.js"}],"components/TestComponent.tsx":[function(require,module,exports) {
 "use strict";
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -64962,8 +64883,6 @@ var lodash_1 = require("lodash");
 var bluetoothSerial_1 = __importDefault(require("../services/bluetoothSerial"));
 
 var StatusChecker_1 = __importDefault(require("./StatusChecker"));
-
-var ManageParams_1 = __importDefault(require("./ManageParams"));
 
 var ENABLE_STATUS = {
   NO: 0,
@@ -65149,7 +65068,7 @@ exports.default = function () {
       dispatch = _react_1$useReducer2[1];
 
   return react_1.default.createElement("div", null, react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.NavLink, {
-    to: "/test/parameters"
+    to: "/parameters"
   }, "Parameters"), react_1.default.createElement(Enable, {
     isEnabled: state.enabled,
     dispatch: dispatch
@@ -65170,14 +65089,9 @@ exports.default = function () {
     asyncCall: function asyncCall() {
       return actions.isEnabled()(dispatch);
     }
-  }), react_1.default.createElement(react_router_dom_1.Route, {
-    path: "/test/parameters",
-    render: function render() {
-      return react_1.default.createElement(ManageParams_1.default, null);
-    }
   })));
 };
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../services/bluetoothSerial":"services/bluetoothSerial.ts","./StatusChecker":"components/StatusChecker.tsx","./ManageParams":"components/ManageParams.tsx"}],"components/app.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../services/bluetoothSerial":"services/bluetoothSerial.ts","./StatusChecker":"components/StatusChecker.tsx"}],"components/app.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -65194,29 +65108,33 @@ var react_1 = __importDefault(require("react"));
 
 var react_router_dom_1 = require("react-router-dom");
 
-var connect_1 = __importDefault(require("./views/connect"));
+var ManageParams_1 = __importDefault(require("./ManageParams"));
 
 var TestComponent_1 = __importDefault(require("./TestComponent"));
 
 var App = function App() {
-  return react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.HashRouter, null, react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.Link, {
+  return react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.HashRouter, null, react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.NavLink, {
     to: "/test"
-  }, "Test"), react_1.default.createElement(react_router_dom_1.Route, {
-    path: "/",
-    exact: true,
-    component: connect_1.default,
-    pageName: "Connect",
-    pageDescription: "Connect A Locator"
-  }), react_1.default.createElement(react_router_dom_1.Route, {
+  }, "Test"), react_1.default.createElement(react_router_dom_1.NavLink, {
+    to: "/parameters"
+  }, "Parameters"), react_1.default.createElement(react_router_dom_1.Route, {
     path: "/test",
     render: function render() {
       return react_1.default.createElement(TestComponent_1.default, null);
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "/parameters",
+    render: function render(_ref) {
+      var match = _ref.match;
+      return react_1.default.createElement(ManageParams_1.default, {
+        match: match
+      });
     }
   }))));
 };
 
 exports.default = App;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","./views/connect":"components/views/connect.tsx","./TestComponent":"components/TestComponent.tsx"}],"index.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","./ManageParams":"components/ManageParams.tsx","./TestComponent":"components/TestComponent.tsx"}],"index.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {

@@ -49318,7 +49318,7 @@ var result = {
     store.set(KEY, svcs);
   },
   getIndex: function getIndex(svc) {
-    return result.getIndex(svc);
+    return store.getIndex(svc);
   },
   remove: function remove(svc) {
     var svcs = result.fetch();
@@ -49358,8 +49358,10 @@ var ServiceParamStore_1 = __importDefault(require("../services/ServiceParamStore
 
 var Services = function Services(_ref) {
   var match = _ref.match;
-  var services = ServiceParamStore_1.default.fetch().map(function (svc) {
-    return react_1.default.createElement("tr", null, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
+  var services = ServiceParamStore_1.default.fetch().map(function (svc, i) {
+    return react_1.default.createElement("tr", {
+      key: i
+    }, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
       to: "/service/".concat(svc.service)
     }, svc.service)));
   }); // const [serviceUpdated, setServiceUpdated] = useState(false);
@@ -64445,6 +64447,24 @@ exports.default = Characteristic;
 "use strict"; /// <reference path="../../../ts/index.d.ts" />
 /// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -64455,9 +64475,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var react_1 = __importDefault(require("react"));
+var react_1 = __importStar(require("react"));
 
 var react_router_dom_1 = require("react-router-dom");
+
+var ServiceParamStore_1 = __importDefault(require("../../services/ServiceParamStore"));
 
 var Characteristic_1 = __importDefault(require("./Characteristic"));
 
@@ -64499,16 +64521,78 @@ var CharacteristicLinks = function CharacteristicLinks(_ref3) {
   });
 };
 
+var ServiceNameEditor = function ServiceNameEditor(_ref4) {
+  var name = _ref4.name;
+
+  var _react_1$useState = react_1.useState(name),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      serviceName = _react_1$useState2[0],
+      setServiceName = _react_1$useState2[1];
+};
+
+var ServiceName = function ServiceName(_ref5) {
+  var saved = _ref5.saved,
+      name = _ref5.name,
+      setName = _ref5.setName;
+
+  if (!saved) {
+    return react_1.default.createElement(react_1.default.Fragment, null, react_1.default.createElement("label", {
+      htmlFor: "serviceName"
+    }, "Service Name"), react_1.default.createElement("input", {
+      type: "text",
+      id: "serviceName",
+      defaultValue: name,
+      readOnly: saved,
+      onChange: function onChange(e) {
+        return setName(e.target.value);
+      }
+    }));
+  } else {
+    return react_1.default.createElement("h3", null, "Service ", name);
+  }
+};
+
 var ServiceOptions = function ServiceOptions(serviceModel) {
-  return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Service Params for ", serviceModel.service), react_1.default.createElement("h2", null, "Characteristics"), react_1.default.createElement(CharacteristicLinks, {
+  var _react_1$useState3 = react_1.useState(serviceModel.service),
+      _react_1$useState4 = _slicedToArray(_react_1$useState3, 2),
+      serviceName = _react_1$useState4[0],
+      setServiceName = _react_1$useState4[1];
+
+  var _react_1$useState5 = react_1.useState(serviceModel.characteristics),
+      _react_1$useState6 = _slicedToArray(_react_1$useState5, 2),
+      characteristics = _react_1$useState6[0],
+      setCharacteristics = _react_1$useState6[1];
+
+  var save = function save() {
+    console.log("save");
+    ServiceParamStore_1.default.update({
+      service: serviceName,
+      characteristics: characteristics
+    });
+  };
+
+  return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Characteristics"), react_1.default.createElement(CharacteristicLinks, {
     characteristics: serviceModel.characteristics
   }), react_1.default.createElement(CharacteristicRoutes, {
     characteristics: serviceModel.characteristics
-  }));
+  }), react_1.default.createElement("form", {
+    onSubmit: save
+  }, react_1.default.createElement(ServiceName, {
+    name: serviceName,
+    setName: setServiceName,
+    saved: serviceModel.service !== ""
+  }), react_1.default.createElement("button", {
+    onClick: function onClick(e) {
+      return ServiceParamStore_1.default.update({
+        service: serviceName,
+        characteristics: []
+      });
+    }
+  }, "Create")));
 };
 
 exports.default = ServiceOptions;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","./Characteristic":"components/Params/Characteristic.tsx"}],"components/ManageParams.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../../services/ServiceParamStore":"services/ServiceParamStore.ts","./Characteristic":"components/Params/Characteristic.tsx"}],"components/ManageParams.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 

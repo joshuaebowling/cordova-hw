@@ -3,7 +3,6 @@ import { NavLink, Route } from "react-router-dom";
 import { assign } from "lodash";
 import bluetoothSerial from "../services/bluetoothSerial";
 import StatusChecker from "./StatusChecker";
-import ManageParams from "./ManageParams";
 
 const ENABLE_STATUS = {
   NO: 0,
@@ -157,7 +156,7 @@ export default () => {
   return (
     <div>
       <div>
-        <NavLink to="/test/parameters">Parameters</NavLink>
+        <NavLink to="/parameters">Parameters</NavLink>
         <Enable isEnabled={state.enabled} dispatch={dispatch} />
         <EnableError errorInfo={state.error} />
         <p>Discovery</p>
@@ -173,7 +172,6 @@ export default () => {
           }}
           asyncCall={() => actions.isEnabled()(dispatch)}
         />
-        <Route path="/test/parameters" render={() => <ManageParams />} />
       </div>
     </div>
   );

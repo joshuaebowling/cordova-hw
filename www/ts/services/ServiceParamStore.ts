@@ -34,7 +34,7 @@ const result: Services.IServiceParamStore = {
     }
     store.set(KEY, svcs);
   },
-  getIndex: (svc: Params.initService) => result.getIndex(svc),
+  getIndex: (svc: Params.initService) => store.getIndex(svc),
   remove: (svc: Params.initService) => {
     const svcs = result.fetch();
     remove(svcs, (svca: Params.initService) => svca.service === svc.service);

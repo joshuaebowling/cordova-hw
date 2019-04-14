@@ -7,13 +7,15 @@ import { Link, Route } from "react-router-dom";
 import ServiceParamStore from "../services/ServiceParamStore";
 
 const Services = ({ match }) => {
-  const services = ServiceParamStore.fetch().map((svc: Params.initService) => (
-    <tr>
-      <td>
-        <Link to={`/service/${svc.service}`}>{svc.service}</Link>
-      </td>
-    </tr>
-  ));
+  const services = ServiceParamStore.fetch().map(
+    (svc: Params.initService, i: number) => (
+      <tr key={i}>
+        <td>
+          <Link to={`/service/${svc.service}`}>{svc.service}</Link>
+        </td>
+      </tr>
+    )
+  );
   // const [serviceUpdated, setServiceUpdated] = useState(false);
   // useEffect(() => {
   //   if(serviceUpdated) {

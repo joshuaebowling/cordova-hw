@@ -28,9 +28,10 @@ import Service from "./Params/Service";
 //   );
 // };
 
-const ManageParams: Components.ServiceParams = ({ initParams }) => {
+const ManageParams: Components.ServiceParams = ({ match }) => {
   return (
     <div>
+      <Services match={match} />
       <Route
         path="/service/:name"
         render={({ match }) => {
@@ -47,14 +48,12 @@ const ManageParams: Components.ServiceParams = ({ initParams }) => {
         }}
       />
       <Route
-        path="/test/a"
+        path={`${match.url}/service_new`}
         render={({ match }) => {
           console.log("matched");
           return <Service service={""} characteristics={[]} />;
         }}
       />
-
-      <Services />
     </div>
   );
 };
