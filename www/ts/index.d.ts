@@ -6,6 +6,7 @@ declare namespace Params {
   type advertising = BluetoothlePlugin.AdvertisingParams;
   type peripheral = BluetoothlePlugin.InitPeripheralParams;
   interface advertise {
+    name: string;
     peripheral: peripheral;
     service: initService;
     advertisement: advertising;
@@ -40,6 +41,15 @@ declare namespace Services {
     getIndex(snip: Params.initService): number;
     remove(snip: Params.initService): void;
     fetch(): Array<Params.initService>;
+    reset(): void;
+  }
+  interface IAdvertiseStore {
+    find(crit: string | number): Params.advertise;
+    createModel(): Params.advertise;
+    update(advert: Params.advertise): void;
+    getIndex(advert: Params.advertise): number;
+    remove(advert: Params.advertise): void;
+    fetch(): Array<Params.advertise>;
     reset(): void;
   }
 }

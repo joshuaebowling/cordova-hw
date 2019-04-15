@@ -16,7 +16,6 @@ const Characteristics = ({ match }) => {
   };
   const CharacteristicBody = () => {
     const onDelete = (ch: BluetoothlePlugin.Characteristic) => {
-      console.log("remove", ch);
       CharacteristicsStore.remove(ch);
       setCharacteristics(CharacteristicsStore.fetch());
     };

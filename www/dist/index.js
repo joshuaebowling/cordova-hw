@@ -68223,7 +68223,6 @@ var Characteristics = function Characteristics(_ref) {
 
   var CharacteristicBody = function CharacteristicBody() {
     var onDelete = function onDelete(ch) {
-      console.log("remove", ch);
       CharacteristicStore_1.default.remove(ch);
       setCharacteristics(CharacteristicStore_1.default.fetch());
     };
