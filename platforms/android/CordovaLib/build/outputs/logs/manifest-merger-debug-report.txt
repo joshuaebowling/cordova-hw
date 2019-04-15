@@ -1,12 +1,12 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-23:12
-INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-23:12
-INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-23:12
-INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-23:12
-INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-23:12
-INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-23:12
-INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-23:12
+ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-26:12
+INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-26:12
+INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-26:12
+INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-26:12
+INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-26:12
+INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-26:12
+INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:20:1-26:12
 	package
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:21:7-35
 		INJECTED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml
@@ -25,3 +25,15 @@ uses-sdk
 ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:22:5-44
 	android:minSdkVersion
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:22:15-41
+uses-permission#android.permission.BLUETOOTH
+ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:23:5-68
+	android:name
+		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:23:22-65
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:24:5-74
+	android:name
+		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:24:22-71
+uses-permission#android.permission.USE_COARSE_LOCATION
+ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:25:5-78
+	android:name
+		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/CordovaLib/AndroidManifest.xml:25:22-75

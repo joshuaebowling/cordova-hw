@@ -79,8 +79,8 @@ const ServiceOptions = (serviceModel: Params.initService) => {
   return (
     <div>
       <h2>Characteristics</h2>
-      <CharacteristicLinks characteristics={...serviceModel.characteristics} />
-      <CharacteristicRoutes characteristics={...serviceModel.characteristics} />
+      <CharacteristicLinks characteristics={...characteristics} />
+      <CharacteristicRoutes characteristics={...characteristics} />
       <form onSubmit={save}>
         <ServiceName
           name={serviceName}
@@ -91,7 +91,7 @@ const ServiceOptions = (serviceModel: Params.initService) => {
           onClick={e =>
             ServiceParamStore.update({
               service: serviceName,
-              characteristics: []
+              characteristics
             })
           }
         >

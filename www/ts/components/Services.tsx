@@ -38,7 +38,6 @@ const Services = ({ match }) => {
         </thead>
         <tbody>{services}</tbody>
       </table>
-      {services}
     </div>
   );
 };

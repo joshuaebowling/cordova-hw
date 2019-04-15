@@ -28,6 +28,8 @@ const result: Services.ICharacteristicStore = {
     if (ch.uuid === "") return;
     const chs = result.fetch();
     const found = result.find(ch.uuid);
+    console.log("found", found);
+    console.log(chs);
     if (!found) {
       chs.push(ch);
     } else {
