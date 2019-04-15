@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { Link, Route } from "react-router-dom";
+import Select from "react-select";
 
 import CharacteristicStore from "../../services/CharacteristicStore";
 import ServiceParamStore from "../../services/ServiceParamStore";
@@ -65,10 +66,12 @@ const ServiceName = ({ saved, name, setName }) => {
 };
 
 const ServiceOptions = (serviceModel: Params.initService) => {
+  const allCharacteristics = CharacteristicStore.fetch();
   const [serviceName, setServiceName] = useState(serviceModel.service);
   const [characteristics, setCharacteristics] = useState(
     serviceModel.characteristics
   );
+  console.log(characteristics);
   const save = () => {
     console.log("save");
     ServiceParamStore.update({
@@ -86,6 +89,20 @@ const ServiceOptions = (serviceModel: Params.initService) => {
           name={serviceName}
           setName={setServiceName}
           saved={serviceModel.service !== ""}
+        />
+        <Select
+          isMulti={true}
+          options={allCharacteristics.map(ch => ({
+            value: ch.uuid,
+            label: ch.uuid
+          }))}
+          values={characteristics.map(ch => ch.uuid)}
+          onChange={selectedOption => {
+            console.log(selectedOption);
+            characteristics.push(selectedOption);
+            console.log(characteristics);
+            setCharacteristics(characteristics);
+          }}
         />
         <button
           onClick={e =>

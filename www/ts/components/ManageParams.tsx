@@ -12,25 +12,6 @@ import Service from "./Params/Service";
 import Characteristics from "./Params/Characteristics";
 import Characteristic from "./Params/Characteristic";
 
-// const Service = ({ service, redirect, allCharacteristics }) => {
-//   const initialServiceParam =
-//     service === ""
-//       ? ServiceParamStore.createModel()
-//       : ServiceParamStore.find(service);
-//   const [characteristics, setCharacteristics] = useState(initialServiceParam);
-//   return (
-//     <div>
-//       <h1>here</h1>
-//       <h3>{service || "new "}</h3>
-//       <Select
-//         options={allCharacteristics}
-//         value={characteristics}
-//         onChange={d => console.log(d)}
-//       />
-//     </div>
-//   );
-// };
-
 const ManageParams: Components.ServiceParams = ({ match }) => {
   return (
     <div>
@@ -44,8 +25,9 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
         render={e => <Services match={match} />}
       />
       <Route
-        path="/service/:name"
+        path={`/parameters/service/:name`}
         render={({ match }) => {
+          console.log(match.params);
           const service: Params.initService = ServiceParamStore.find(
             match.params.name
           );

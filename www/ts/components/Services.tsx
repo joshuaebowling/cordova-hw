@@ -11,7 +11,7 @@ const Services = ({ match }) => {
     (svc: Params.initService, i: number) => (
       <tr key={i}>
         <td>
-          <Link to={`/service/${svc.service}`}>{svc.service}</Link>
+          <Link to={`parameters/service/${svc.service}`}>{svc.service}</Link>
         </td>
       </tr>
     )
