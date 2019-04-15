@@ -71,9 +71,8 @@ const ServiceOptions = (serviceModel: Params.initService) => {
   const [characteristics, setCharacteristics] = useState(
     serviceModel.characteristics
   );
-  console.log(characteristics);
+
   const save = () => {
-    console.log("save");
     ServiceParamStore.update({
       service: serviceName,
       characteristics
@@ -96,12 +95,9 @@ const ServiceOptions = (serviceModel: Params.initService) => {
             value: ch.uuid,
             label: ch.uuid
           }))}
-          values={characteristics.map(ch => ch.uuid)}
+          value={characteristics.map(ch => ({ label: ch, value: ch }))}
           onChange={selectedOption => {
-            console.log(selectedOption);
-            characteristics.push(selectedOption);
-            console.log(characteristics);
-            setCharacteristics(characteristics);
+            setCharacteristics(selectedOption.map(s => s.value));
           }}
         />
         <button
@@ -112,7 +108,7 @@ const ServiceOptions = (serviceModel: Params.initService) => {
             })
           }
         >
-          Create
+          Submit
         </button>
       </form>
     </div>

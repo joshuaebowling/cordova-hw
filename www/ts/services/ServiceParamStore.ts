@@ -20,6 +20,7 @@ console.log(store);
 const result: Services.IServiceParamStore = {
   find: (crit: string | number) => {
     const items = result.fetch();
+    console.log(items);
     return items.find((svc: Params.initService) => svc.service === crit);
   },
   createModel: () => ServiceParamModel(),
@@ -30,11 +31,16 @@ const result: Services.IServiceParamStore = {
     if (!found) {
       svcs.push(svc);
     } else {
-      svcs[result.getIndex(svc)] = svc;
+      const index = result.getIndex(svc);
+      svcs[index] = svc;
     }
     store.set(KEY, svcs);
   },
-  getIndex: (svc: Params.initService) => store.getIndex(svc),
+  getIndex: (svc: Params.initService) =>
+    result
+      .fetch()
+      .map((svc: Params.initService) => svc.service)
+      .indexOf(svc.service),
   remove: (svc: Params.initService) => {
     const svcs = result.fetch();
     remove(svcs, (svca: Params.initService) => svca.service === svc.service);

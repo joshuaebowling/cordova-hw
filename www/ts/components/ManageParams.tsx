@@ -27,7 +27,6 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
       <Route
         path={`/parameters/service/:name`}
         render={({ match }) => {
-          console.log(match.params);
           const service: Params.initService = ServiceParamStore.find(
             match.params.name
           );

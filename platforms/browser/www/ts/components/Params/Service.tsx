@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { Link, Route } from "react-router-dom";
+import Select from "react-select";
 
 import CharacteristicStore from "../../services/CharacteristicStore";
 import ServiceParamStore from "../../services/ServiceParamStore";
@@ -65,10 +66,12 @@ const ServiceName = ({ saved, name, setName }) => {
 };
 
 const ServiceOptions = (serviceModel: Params.initService) => {
+  const allCharacteristics = CharacteristicStore.fetch();
   const [serviceName, setServiceName] = useState(serviceModel.service);
   const [characteristics, setCharacteristics] = useState(
     serviceModel.characteristics
   );
+  console.log(characteristics);
   const save = () => {
     console.log("save");
     ServiceParamStore.update({
@@ -79,23 +82,34 @@ const ServiceOptions = (serviceModel: Params.initService) => {
   return (
     <div>
       <h2>Characteristics</h2>
-      <CharacteristicLinks characteristics={...serviceModel.characteristics} />
-      <CharacteristicRoutes characteristics={...serviceModel.characteristics} />
+      <CharacteristicLinks characteristics={...characteristics} />
+      <CharacteristicRoutes characteristics={...characteristics} />
       <form onSubmit={save}>
         <ServiceName
           name={serviceName}
           setName={setServiceName}
           saved={serviceModel.service !== ""}
         />
+        <Select
+          isMulti={true}
+          options={allCharacteristics.map(ch => ({
+            value: ch.uuid,
+            label: ch.uuid
+          }))}
+          values={characteristics.map(ch => ch.uuid)}
+          onChange={selectedOption => {
+            setCharacteristics(selectedOption.map(s => s.value));
+          }}
+        />
         <button
           onClick={e =>
             ServiceParamStore.update({
               service: serviceName,
-              characteristics: []
+              characteristics
             })
           }
         >
-          Create
+          Submit
         </button>
       </form>
     </div>

@@ -49290,7 +49290,7 @@ var result = {
   getIndex: function getIndex(ch) {
     return result.fetch().map(function (snip) {
       return snip.uuid;
-    }).indexOf(ch.uuid) + 1;
+    }).indexOf(ch.uuid);
   },
   remove: function remove(ch) {
     var chs = result.fetch();
@@ -49370,6 +49370,7 @@ console.log(store);
 var result = {
   find: function find(crit) {
     var items = result.fetch();
+    console.log(items);
     return items.find(function (svc) {
       return svc.service === crit;
     });
@@ -49385,13 +49386,16 @@ var result = {
     if (!found) {
       svcs.push(svc);
     } else {
-      svcs[result.getIndex(svc)] = svc;
+      var index = result.getIndex(svc);
+      svcs[index] = svc;
     }
 
     store.set(KEY, svcs);
   },
   getIndex: function getIndex(svc) {
-    return store.getIndex(svc);
+    return result.fetch().map(function (svc) {
+      return svc.service;
+    }).indexOf(svc.service);
   },
   remove: function remove(svc) {
     var svcs = result.fetch();
@@ -49413,6 +49417,24 @@ exports.default = result;
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -49423,7 +49445,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var react_1 = __importDefault(require("react"));
+var react_1 = __importStar(require("react"));
 
 var react_router_dom_1 = require("react-router-dom");
 
@@ -49431,12 +49453,27 @@ var ServiceParamStore_1 = __importDefault(require("../services/ServiceParamStore
 
 var Services = function Services(_ref) {
   var match = _ref.match;
-  var services = ServiceParamStore_1.default.fetch().map(function (svc, i) {
+
+  var onDelete = function onDelete(svc) {
+    ServiceParamStore_1.default.remove(svc);
+    setServices(ServiceParamStore_1.default.fetch());
+  };
+
+  var _react_1$useState = react_1.useState(ServiceParamStore_1.default.fetch()),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      services = _react_1$useState2[0],
+      setServices = _react_1$useState2[1];
+
+  var serviceBody = services.map(function (svc, i) {
     return react_1.default.createElement("tr", {
       key: i
     }, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
-      to: "parameters/service/".concat(svc.service)
-    }, svc.service)));
+      to: "service/".concat(svc.service)
+    }, svc.service)), react_1.default.createElement("td", null, react_1.default.createElement("button", {
+      onClick: function onClick(e) {
+        return onDelete(svc);
+      }
+    }, "Delete")));
   }); // const [serviceUpdated, setServiceUpdated] = useState(false);
   // useEffect(() => {
   //   if(serviceUpdated) {
@@ -49451,7 +49488,7 @@ var Services = function Services(_ref) {
 
   return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Services"), react_1.default.createElement(react_router_dom_1.Link, {
     to: "".concat(match.url, "/service_new")
-  }, "Add New Service"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "Service Name"))), react_1.default.createElement("tbody", null, services)));
+  }, "Add New Service"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "Service Name"))), react_1.default.createElement("tbody", null, serviceBody)));
 };
 
 exports.default = Services;
@@ -68079,10 +68116,7 @@ var ServiceOptions = function ServiceOptions(serviceModel) {
       characteristics = _react_1$useState6[0],
       setCharacteristics = _react_1$useState6[1];
 
-  console.log(characteristics);
-
   var save = function save() {
-    console.log("save");
     ServiceParamStore_1.default.update({
       service: serviceName,
       characteristics: characteristics
@@ -68107,14 +68141,16 @@ var ServiceOptions = function ServiceOptions(serviceModel) {
         label: ch.uuid
       };
     }),
-    values: characteristics.map(function (ch) {
-      return ch.uuid;
+    value: characteristics.map(function (ch) {
+      return {
+        label: ch,
+        value: ch
+      };
     }),
     onChange: function onChange(selectedOption) {
-      console.log(selectedOption);
-      characteristics.push(selectedOption);
-      console.log(characteristics);
-      setCharacteristics(characteristics);
+      setCharacteristics(selectedOption.map(function (s) {
+        return s.value;
+      }));
     }
   }), react_1.default.createElement("button", {
     onClick: function onClick(e) {
@@ -68123,7 +68159,7 @@ var ServiceOptions = function ServiceOptions(serviceModel) {
         characteristics: characteristics
       });
     }
-  }, "Create")));
+  }, "Submit")));
 };
 
 exports.default = ServiceOptions;
@@ -68186,21 +68222,30 @@ var Characteristics = function Characteristics(_ref) {
   };
 
   var CharacteristicBody = function CharacteristicBody() {
-    console.log("chars", characteristics);
+    var onDelete = function onDelete(ch) {
+      console.log("remove", ch);
+      CharacteristicStore_1.default.remove(ch);
+      setCharacteristics(CharacteristicStore_1.default.fetch());
+    };
+
     var result = lodash_1.map(characteristics, function (ch, i) {
       return react_1.default.createElement("tr", {
         key: i
       }, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
         to: "".concat(match.url, "/characteristic/").concat(ch.uuid),
         characteristic: ch
-      }, ch.uuid)));
+      }, ch.uuid)), react_1.default.createElement("td", null, react_1.default.createElement("button", {
+        onClick: function onClick(e) {
+          return onDelete(ch);
+        }
+      }, "Delete")));
     });
     return result;
   };
 
   return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Characteristics"), react_1.default.createElement(react_router_dom_1.Link, {
-    to: "".concat(match.url, "/characteristic")
-  }, "Add New Characteristic"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "UUID"))), react_1.default.createElement("tbody", null, react_1.default.createElement("tr", null, react_1.default.createElement("td", null, "test")), react_1.default.createElement(CharacteristicBody, null))));
+    to: "".concat(match.url, "/characteristicnew")
+  }, "Add New Characteristic"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "UUID"), react_1.default.createElement("th", null, "actions"))), react_1.default.createElement("tbody", null, react_1.default.createElement(CharacteristicBody, null))));
 };
 
 exports.default = Characteristics;
@@ -68253,7 +68298,6 @@ var ManageParams = function ManageParams(_ref) {
     path: "/parameters/service/:name",
     render: function render(_ref2) {
       var match = _ref2.match;
-      console.log(match.params);
       var service = ServiceParamStore_1.default.find(match.params.name);
       return react_1.default.createElement(Service_1.default, {
         service: match.params.name,

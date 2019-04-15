@@ -41,7 +41,7 @@ const result: Services.ICharacteristicStore = {
     result
       .fetch()
       .map((snip: BluetoothlePlugin.Characteristic) => snip.uuid)
-      .indexOf(ch.uuid) + 1,
+      .indexOf(ch.uuid),
   remove: (ch: BluetoothlePlugin.Characteristic) => {
     const chs = result.fetch();
     remove(

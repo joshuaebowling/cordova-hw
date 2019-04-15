@@ -7,15 +7,21 @@ import { Link, Route } from "react-router-dom";
 import ServiceParamStore from "../services/ServiceParamStore";
 
 const Services = ({ match }) => {
-  const services = ServiceParamStore.fetch().map(
-    (svc: Params.initService, i: number) => (
-      <tr key={i}>
-        <td>
-          <Link to={`parameters/service/${svc.service}`}>{svc.service}</Link>
-        </td>
-      </tr>
-    )
-  );
+  const onDelete = (svc: Params.initService) => {
+    ServiceParamStore.remove(svc);
+    setServices(ServiceParamStore.fetch());
+  };
+  const [services, setServices] = useState(ServiceParamStore.fetch());
+  const serviceBody = services.map((svc: Params.initService, i: number) => (
+    <tr key={i}>
+      <td>
+        <Link to={`service/${svc.service}`}>{svc.service}</Link>
+      </td>
+      <td>
+        <button onClick={e => onDelete(svc)}>Delete</button>
+      </td>
+    </tr>
+  ));
   // const [serviceUpdated, setServiceUpdated] = useState(false);
   // useEffect(() => {
   //   if(serviceUpdated) {
@@ -36,7 +42,7 @@ const Services = ({ match }) => {
             <th>Service Name</th>
           </tr>
         </thead>
-        <tbody>{services}</tbody>
+        <tbody>{serviceBody}</tbody>
       </table>
     </div>
   );
