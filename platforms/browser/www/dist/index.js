@@ -49290,7 +49290,7 @@ var result = {
   getIndex: function getIndex(ch) {
     return result.fetch().map(function (snip) {
       return snip.uuid;
-    }).indexOf(ch.uuid) + 1;
+    }).indexOf(ch.uuid);
   },
   remove: function remove(ch) {
     var chs = result.fetch();
@@ -49370,6 +49370,7 @@ console.log(store);
 var result = {
   find: function find(crit) {
     var items = result.fetch();
+    console.log(items);
     return items.find(function (svc) {
       return svc.service === crit;
     });
@@ -49378,7 +49379,6 @@ var result = {
     return ServiceParams_1.default();
   },
   update: function update(svc) {
-    console.log("svc", svc);
     if (svc.service === "") return;
     var svcs = result.fetch();
     var found = result.find(svc.service);
@@ -49386,7 +49386,8 @@ var result = {
     if (!found) {
       svcs.push(svc);
     } else {
-      svcs[result.getIndex(svc)] = svc;
+      var index = result.getIndex(svc);
+      svcs[index] = svc;
     }
 
     store.set(KEY, svcs);
@@ -49394,7 +49395,7 @@ var result = {
   getIndex: function getIndex(svc) {
     return result.fetch().map(function (svc) {
       return svc.service;
-    }).indexOf(svc.service) + 1;
+    }).indexOf(svc.service);
   },
   remove: function remove(svc) {
     var svcs = result.fetch();
@@ -49412,7 +49413,7 @@ var result = {
   }
 };
 exports.default = result;
-},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/ServiceParams":"models/ServiceParams.ts"}],"components/Services.tsx":[function(require,module,exports) {
+},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/ServiceParams":"models/ServiceParams.ts"}],"services/AdvertiseStore.ts":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -49426,7 +49427,96 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var react_1 = __importDefault(require("react"));
+var lodash_1 = require("lodash");
+
+var basil_js_1 = __importDefault(require("basil.js"));
+
+var Characteristic_1 = __importDefault(require("../models/Characteristic"));
+
+var KEY = "bluetooth-testing-suite-advertisement";
+var store = new basil_js_1.default({
+  namespace: KEY,
+  storages: ["cookie", "local"],
+  storage: "local",
+  expireDays: 365
+});
+var result = {
+  find: function find(crit) {
+    var items = result.fetch();
+    return items.find(function (advert) {
+      return advert.service === crit;
+    });
+  },
+  createModel: function createModel() {
+    return Characteristic_1.default();
+  },
+  update: function update(adv) {
+    if (adv.service === "") return;
+    var advs = result.fetch();
+    var found = result.find(adv.service);
+
+    if (!found) {
+      advs.push(adv);
+    } else {
+      advs[result.getIndex(adv)] = adv;
+    }
+
+    store.set(KEY, advs);
+  },
+  getIndex: function getIndex(adv) {
+    return result.fetch().map(function (advert) {
+      return advert.service;
+    }).indexOf(adv.service);
+  },
+  remove: function remove(adv) {
+    var advs = result.fetch();
+    lodash_1.remove(advs, function (advert) {
+      return advert.service === adv.service;
+    });
+    store.set(KEY);
+  },
+  fetch: function fetch() {
+    var fetched = store.get(KEY) || [];
+    return fetched;
+  },
+  reset: function reset() {
+    return store.set(KEY, null);
+  }
+};
+exports.default = result;
+},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/Characteristic":"models/Characteristic.ts"}],"components/Services.tsx":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importStar(require("react"));
 
 var react_router_dom_1 = require("react-router-dom");
 
@@ -49434,12 +49524,27 @@ var ServiceParamStore_1 = __importDefault(require("../services/ServiceParamStore
 
 var Services = function Services(_ref) {
   var match = _ref.match;
-  var services = ServiceParamStore_1.default.fetch().map(function (svc, i) {
+
+  var onDelete = function onDelete(svc) {
+    ServiceParamStore_1.default.remove(svc);
+    setServices(ServiceParamStore_1.default.fetch());
+  };
+
+  var _react_1$useState = react_1.useState(ServiceParamStore_1.default.fetch()),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      services = _react_1$useState2[0],
+      setServices = _react_1$useState2[1];
+
+  var serviceBody = services.map(function (svc, i) {
     return react_1.default.createElement("tr", {
       key: i
     }, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
       to: "service/".concat(svc.service)
-    }, svc.service)));
+    }, svc.service)), react_1.default.createElement("td", null, react_1.default.createElement("button", {
+      onClick: function onClick(e) {
+        return onDelete(svc);
+      }
+    }, "Delete")));
   }); // const [serviceUpdated, setServiceUpdated] = useState(false);
   // useEffect(() => {
   //   if(serviceUpdated) {
@@ -49454,7 +49559,7 @@ var Services = function Services(_ref) {
 
   return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Services"), react_1.default.createElement(react_router_dom_1.Link, {
     to: "".concat(match.url, "/service_new")
-  }, "Add New Service"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "Service Name"))), react_1.default.createElement("tbody", null, services)));
+  }, "Add New Service"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "Service Name"))), react_1.default.createElement("tbody", null, serviceBody)));
 };
 
 exports.default = Services;
@@ -67888,9 +67993,6 @@ var Permissions = function Permissions(_ref) {
       onChange: handleChange
     }));
   });
-
-  http: ; //localhost:8000/?read=on&writeWithoutResponse=on&write=on&notify=on&indicate=on&authenticatedSignedWrites=on&notifyEncryptionRequired=on&indicateEncryptionRequired=on&read=on&write=on&readEncryptionRequired=on&writeEncryptionRequired=on#/parameters
-
 };
 
 var Properties = function Properties(_ref2) {
@@ -68082,10 +68184,7 @@ var ServiceOptions = function ServiceOptions(serviceModel) {
       characteristics = _react_1$useState6[0],
       setCharacteristics = _react_1$useState6[1];
 
-  console.log(characteristics);
-
   var save = function save() {
-    console.log("save");
     ServiceParamStore_1.default.update({
       service: serviceName,
       characteristics: characteristics
@@ -68110,8 +68209,11 @@ var ServiceOptions = function ServiceOptions(serviceModel) {
         label: ch.uuid
       };
     }),
-    values: characteristics.map(function (ch) {
-      return ch.uuid;
+    value: characteristics.map(function (ch) {
+      return {
+        label: ch,
+        value: ch
+      };
     }),
     onChange: function onChange(selectedOption) {
       setCharacteristics(selectedOption.map(function (s) {
@@ -68188,25 +68290,184 @@ var Characteristics = function Characteristics(_ref) {
   };
 
   var CharacteristicBody = function CharacteristicBody() {
-    console.log("chars", characteristics);
+    var onDelete = function onDelete(ch) {
+      CharacteristicStore_1.default.remove(ch);
+      setCharacteristics(CharacteristicStore_1.default.fetch());
+    };
+
     var result = lodash_1.map(characteristics, function (ch, i) {
       return react_1.default.createElement("tr", {
         key: i
       }, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
         to: "".concat(match.url, "/characteristic/").concat(ch.uuid),
         characteristic: ch
-      }, ch.uuid)));
+      }, ch.uuid)), react_1.default.createElement("td", null, react_1.default.createElement("button", {
+        onClick: function onClick(e) {
+          return onDelete(ch);
+        }
+      }, "Delete")));
     });
     return result;
   };
 
   return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Characteristics"), react_1.default.createElement(react_router_dom_1.Link, {
-    to: "".concat(match.url, "/characteristic")
-  }, "Add New Characteristic"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "UUID"))), react_1.default.createElement("tbody", null, react_1.default.createElement("tr", null, react_1.default.createElement("td", null, "test")), react_1.default.createElement(CharacteristicBody, null))));
+    to: "".concat(match.url, "/characteristicnew")
+  }, "Add New Characteristic"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "UUID"), react_1.default.createElement("th", null, "actions"))), react_1.default.createElement("tbody", null, react_1.default.createElement(CharacteristicBody, null))));
 };
 
 exports.default = Characteristics;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../../services/CharacteristicStore":"services/CharacteristicStore.ts","./Characteristic":"components/Params/Characteristic.tsx"}],"components/ManageParams.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../../services/CharacteristicStore":"services/CharacteristicStore.ts","./Characteristic":"components/Params/Characteristic.tsx"}],"components/Params/Adverts.tsx":[function(require,module,exports) {
+"use strict"; /// <reference path="../../../ts/index.d.ts" />
+/// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importStar(require("react"));
+
+var react_router_dom_1 = require("react-router-dom");
+
+var AdvertiseStore_1 = __importDefault(require("../../services/AdvertiseStore"));
+
+var AdvertLinks = function AdvertLinks(_ref) {
+  var adverts = _ref.adverts;
+  return adverts.map(function (adv, index) {
+    return react_1.default.createElement(react_router_dom_1.Link, {
+      key: index,
+      to: "/parameters/advert/".concat(adv.uuid)
+    }, adv.uuid);
+  });
+};
+
+var Adverts = function Adverts(_ref2) {
+  var match = _ref2.match;
+
+  var _react_1$useState = react_1.useState(AdvertiseStore_1.default.fetch()),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      adverts = _react_1$useState2[0],
+      setAdverts = _react_1$useState2[1];
+
+  return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Adverts"), react_1.default.createElement(react_router_dom_1.Link, {
+    to: "/parameters/advertnew"
+  }, "New Advert"), react_1.default.createElement(AdvertLinks, {
+    adverts: adverts
+  }));
+};
+
+exports.default = Adverts;
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../../services/AdvertiseStore":"services/AdvertiseStore.ts"}],"components/Params/Advert.tsx":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importDefault(require("react"));
+
+var formik_1 = require("formik");
+
+var react_select_1 = require("react-select");
+
+var AdvertiseStore_1 = __importDefault(require("../../services/AdvertiseStore"));
+
+var Advert = function Advert(_ref) {
+  var advert = _ref.advert;
+  return react_1.default.createElement(formik_1.Formik, {
+    onSubmit: function onSubmit(values, _ref2) {
+      var setSubmitting = _ref2.setSubmitting;
+      console.log(values);
+      AdvertiseStore_1.default.update(values);
+      setTimeout(function () {
+        alert(JSON.stringify(values, null, 2));
+        setSubmitting(false);
+      }, 500);
+    },
+    initialValues: advert
+  }, function (props) {
+    var values = props.values,
+        touched = props.touched,
+        errors = props.errors,
+        dirty = props.dirty,
+        isSubmitting = props.isSubmitting,
+        handleChange = props.handleChange,
+        handleBlur = props.handleBlur,
+        handleSubmit = props.handleSubmit,
+        handleReset = props.handleReset;
+    return react_1.default.createElement("form", {
+      onSubmit: handleSubmit
+    }, react_1.default.createElement("label", {
+      htmlFor: "uuid"
+    }, "UUID"), react_1.default.createElement("input", {
+      type: "text",
+      id: "uuid",
+      value: values.uuid,
+      onChange: handleChange
+    }), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "service"
+    }, "Service"), react_1.default.createElement("input", {
+      type: "text",
+      name: "service",
+      id: "service"
+    }), react_1.default.createElement("label", {
+      htmlFor: "mode"
+    }, "Mode"), react_1.default.createElement(react_select_1.Select, {
+      value: values.mode,
+      options: ["balanced", "lowLatency", "lowPower"].map(function (o) {
+        return {
+          value: o,
+          label: o
+        };
+      }),
+      onChange: handleChange
+    }), react_1.default.createElement("label", {
+      htmlFor: "connectable"
+    }, "Connectable"), react_1.default.createElement("label", {
+      htmlFor: "timeout"
+    }, "Timeout"), react_1.default.createElement("label", {
+      htmlFor: "txPowerLevel"
+    }, "TX Power Level"), react_1.default.createElement("label", {
+      htmlFor: "includeDeviceName"
+    }, "Include Device Name"), react_1.default.createElement("label", {
+      htmlFor: "includeTXPowerLevel"
+    }, "Include TX Power Level")), react_1.default.createElement("button", {
+      type: "submit"
+    }, "Submit"));
+  });
+};
+
+exports.default = Advert;
+},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","react-select":"../../node_modules/react-select/dist/react-select.esm.js","../../services/AdvertiseStore":"services/AdvertiseStore.ts"}],"components/ManageParams.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -68228,6 +68489,8 @@ var CharacteristicStore_1 = __importDefault(require("../services/CharacteristicS
 
 var ServiceParamStore_1 = __importDefault(require("../services/ServiceParamStore"));
 
+var AdvertiseStore_1 = __importDefault(require("../services/AdvertiseStore"));
+
 var Services_1 = __importDefault(require("./Services"));
 
 var Service_1 = __importDefault(require("./Params/Service"));
@@ -68236,6 +68499,10 @@ var Characteristics_1 = __importDefault(require("./Params/Characteristics"));
 
 var Characteristic_1 = __importDefault(require("./Params/Characteristic"));
 
+var Adverts_1 = __importDefault(require("./Params/Adverts"));
+
+var Advert_1 = __importDefault(require("./Params/Advert"));
+
 var ManageParams = function ManageParams(_ref) {
   var match = _ref.match;
   return react_1.default.createElement("div", null, react_1.default.createElement("nav", null, react_1.default.createElement(react_router_dom_1.NavLink, {
@@ -68243,7 +68510,7 @@ var ManageParams = function ManageParams(_ref) {
   }, "Services"), react_1.default.createElement(react_router_dom_1.NavLink, {
     to: "".concat(match.url, "/Characteristics")
   }, "Characteristics"), react_1.default.createElement(react_router_dom_1.NavLink, {
-    to: "/Advertisements"
+    to: "".concat(match.url, "/Advertisements")
   }, "Advertisements")), react_1.default.createElement(react_router_dom_1.Route, {
     path: "".concat(match.url, "/services"),
     render: function render(e) {
@@ -68255,7 +68522,6 @@ var ManageParams = function ManageParams(_ref) {
     path: "/parameters/service/:name",
     render: function render(_ref2) {
       var match = _ref2.match;
-      console.log(match.params);
       var service = ServiceParamStore_1.default.find(match.params.name);
       return react_1.default.createElement(Service_1.default, {
         service: match.params.name,
@@ -68295,11 +68561,35 @@ var ManageParams = function ManageParams(_ref) {
         characteristic: CharacteristicStore_1.default.createModel()
       });
     }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/adverts"),
+    render: function render(e) {
+      return react_1.default.createElement(Adverts_1.default, {
+        match: match
+      });
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/advert/:uuid"),
+    render: function render(_ref6) {
+      var match = _ref6.match;
+      var advert = AdvertiseStore_1.default.find(match.params.uuid);
+      return react_1.default.createElement(Advert_1.default, {
+        advert: advert
+      });
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/advertnew"),
+    render: function render(_ref7) {
+      var match = _ref7.match;
+      return react_1.default.createElement(Advert_1.default, {
+        advert: AdvertiseStore_1.default.createModel()
+      });
+    }
   }));
 };
 
 exports.default = ManageParams;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/CharacteristicStore":"services/CharacteristicStore.ts","../services/ServiceParamStore":"services/ServiceParamStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx","./Params/Characteristics":"components/Params/Characteristics.tsx","./Params/Characteristic":"components/Params/Characteristic.tsx"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/CharacteristicStore":"services/CharacteristicStore.ts","../services/ServiceParamStore":"services/ServiceParamStore.ts","../services/AdvertiseStore":"services/AdvertiseStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx","./Params/Characteristics":"components/Params/Characteristics.tsx","./Params/Characteristic":"components/Params/Characteristic.tsx","./Params/Adverts":"components/Params/Adverts.tsx","./Params/Advert":"components/Params/Advert.tsx"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
 /*global cordova*/
 module.exports = {
 
@@ -68869,7 +69159,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37769" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39919" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

@@ -2,8 +2,14 @@ import React, { useReducer, useState, memo } from "react";
 import { NavLink, Route } from "react-router-dom";
 import { assign } from "lodash";
 import bluetoothSerial from "../services/bluetoothSerial";
-import StatusChecker from "./StatusChecker";
+import BluetoothlePlugin from "cordova-plugin-bluetoothle";
 
+import BluetoothService from "../services/bluetooth";
+
+import StatusChecker from "./StatusChecker";
+import Advertise from "./Test/Advertise";
+
+const bluetoothService = new BluetoothService(bluetoothle);
 const ENABLE_STATUS = {
   NO: 0,
   YES: 1,
@@ -95,6 +101,9 @@ const actions = {
   },
   updateEnabledStatus: (enabled: boolean) => (dispatch: Function) => {
     dispatch({ type: actions.ENABLED_STATUS_RQ, payload: enabled });
+  },
+  advertise: (advert: BluetoothlePlugin.AdvertisingParamsAndroid) => {
+    bluetoothService.advertise();
   }
 };
 

@@ -7,10 +7,14 @@ import Select from "react-select";
 
 import CharacteristicStore from "../services/CharacteristicStore";
 import ServiceParamStore from "../services/ServiceParamStore";
+import AdvertisteStore from "../services/AdvertiseStore";
+
 import Services from "./Services";
 import Service from "./Params/Service";
 import Characteristics from "./Params/Characteristics";
 import Characteristic from "./Params/Characteristic";
+import Adverts from "./Params/Adverts";
+import Advert from "./Params/Advert";
 
 const ManageParams: Components.ServiceParams = ({ match }) => {
   return (
@@ -18,7 +22,7 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
       <nav>
         <NavLink to={`${match.url}/Services`}>Services</NavLink>
         <NavLink to={`${match.url}/Characteristics`}>Characteristics</NavLink>
-        <NavLink to="/Advertisements">Advertisements</NavLink>
+        <NavLink to={`${match.url}/Advertisements`}>Advertisements</NavLink>
       </nav>
       <Route
         path={`${match.url}/services`}
@@ -27,7 +31,6 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
       <Route
         path={`/parameters/service/:name`}
         render={({ match }) => {
-          console.log(match.params);
           const service: Params.initService = ServiceParamStore.find(
             match.params.name
           );
@@ -70,6 +73,23 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
               characteristic={CharacteristicStore.createModel()}
             />
           );
+        }}
+      />
+      <Route
+        path={`${match.url}/adverts`}
+        render={e => <Adverts match={match} />}
+      />
+      <Route
+        path={`${match.url}/advert/:uuid`}
+        render={({ match }) => {
+          const advert = AdvertisteStore.find(match.params.uuid);
+          return <Advert advert={advert} />;
+        }}
+      />
+      <Route
+        path={`${match.url}/advertnew`}
+        render={({ match }) => {
+          return <Advert advert={AdvertisteStore.createModel()} />;
         }}
       />
     </div>

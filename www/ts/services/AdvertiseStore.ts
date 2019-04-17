@@ -5,7 +5,7 @@ import { assign, remove, orderBy, last } from "lodash";
 
 import Basil from "basil.js";
 
-import Model from "../models/Characteristic";
+import Model from "../models/Advert";
 
 const KEY = "bluetooth-testing-suite-advertisement";
 
@@ -19,13 +19,17 @@ const store = new Basil({
 const result: Services.IAdvertiseStore = {
   find: (crit: string | number) => {
     var items = result.fetch();
-    return items.find((advert: Params.advertise) => advert.name === crit);
+    console.log("items", items);
+    return items.find(
+      (advert: BluetoothlePlugin.AdvertisingParamsAndroid) =>
+        advert.uuid === crit
+    );
   },
   createModel: () => Model(),
-  update: (adv: Params.advertise) => {
-    if (adv.name === "") return;
+  update: (adv: BluetoothlePlugin.AdvertisingParamsAndroid) => {
+    if (adv.uuid === "") return;
     const advs = result.fetch();
-    const found = result.find(adv.name);
+    const found = result.find(adv.uuid);
     if (!found) {
       advs.push(adv);
     } else {
@@ -33,15 +37,21 @@ const result: Services.IAdvertiseStore = {
     }
     store.set(KEY, advs);
   },
-  getIndex: (adv: Params.advertise) =>
+  getIndex: (adv: BluetoothlePlugin.AdvertisingParamsAndroid) =>
     result
       .fetch()
-      .map((advert: Params.advertise) => advert.name)
-      .indexOf(adv.name),
-  remove: (adv: Params.advertise) => {
+      .map(
+        (advert: BluetoothlePlugin.AdvertisingParamsAndroid) => advert.service
+      )
+      .indexOf(adv.service),
+  remove: (adv: BluetoothlePlugin.AdvertisingParamsAndroid) => {
     const advs = result.fetch();
-    remove(advs, (advert: Params.advertise) => advert.name === adv.name);
-    store.set(KEY, advs);
+    remove(
+      advs,
+      (advert: BluetoothlePlugin.AdvertisingParamsAndroid) =>
+        advert.service === adv.service
+    );
+    store.set(KEY);
   },
   fetch: () => {
     const fetched = store.get(KEY) || [];

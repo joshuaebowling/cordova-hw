@@ -3,15 +3,19 @@
 
 import { clone } from "lodash";
 
-const advert: Params.advertise = {
-  services: ["1234"], //iOS
+const advert: BluetoothlePlugin.AdvertisingParamsAndroid = {
+  //  services: ["1234"], //iOS
   service: "1234",
-  name: "my",
   mode: "balanced",
   connectable: true,
   timeout: 20000,
-  powerLevel: "high",
-  includeDeviceName: true
+  txPowerLevel: "high",
+  includeDeviceName: true,
+  includeTxPowerLevel: true
 };
+
+const txPowerLevels: Array<string> = ["high", "low", "ultralow", "medium"];
+
+export { txPowerLevels };
 
 export default () => clone(advert);

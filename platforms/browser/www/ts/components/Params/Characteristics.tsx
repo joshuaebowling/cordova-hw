@@ -15,7 +15,10 @@ const Characteristics = ({ match }) => {
     return characteristics.map(ch => <Characteristic characteristic={...ch} />);
   };
   const CharacteristicBody = () => {
-    console.log("chars", characteristics);
+    const onDelete = (ch: BluetoothlePlugin.Characteristic) => {
+      CharacteristicsStore.remove(ch);
+      setCharacteristics(CharacteristicsStore.fetch());
+    };
     var result = map(characteristics, (ch, i) => (
       <tr key={i}>
         <td>
@@ -26,6 +29,9 @@ const Characteristics = ({ match }) => {
             {ch.uuid}
           </Link>
         </td>
+        <td>
+          <button onClick={e => onDelete(ch)}>Delete</button>
+        </td>
       </tr>
     ));
     return result;
@@ -33,17 +39,15 @@ const Characteristics = ({ match }) => {
   return (
     <div>
       <h2>Characteristics</h2>
-      <Link to={`${match.url}/characteristic`}>Add New Characteristic</Link>
+      <Link to={`${match.url}/characteristicnew`}>Add New Characteristic</Link>
       <table>
         <thead>
           <tr>
             <th>UUID</th>
+            <th>actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>test</td>
-          </tr>
           <CharacteristicBody />
         </tbody>
       </table>
