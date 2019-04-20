@@ -23,9 +23,9 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
   return (
     <div>
       <nav>
-        <NavLink to={`${match.url}/Services`}>Services</NavLink>
-        <NavLink to={`${match.url}/Characteristics`}>Characteristics</NavLink>
-        <NavLink to={`${match.url}/Adverts`}>Advertisements</NavLink>
+        <NavLink to={`${match.url}/Services`}>Services</NavLink> |
+        <NavLink to={`${match.url}/Characteristics`}>Characteristics</NavLink> |
+        <NavLink to={`${match.url}/Adverts`}>Advertisements</NavLink> |
         <NavLink to={`${match.url}/Peripherals`}>Peripherals</NavLink>
       </nav>
       <Route

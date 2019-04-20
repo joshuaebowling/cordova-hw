@@ -19,7 +19,6 @@ const store = new Basil({
 const result: Services.IAdvertiseStore = {
   find: (crit: string | number) => {
     var items = result.fetch();
-    console.log("items", items);
     return items.find(
       (advert: BluetoothlePlugin.AdvertisingParamsAndroid) =>
         advert.uuid === crit

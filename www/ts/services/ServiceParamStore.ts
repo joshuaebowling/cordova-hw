@@ -15,12 +15,9 @@ const store = new Basil({
   expireDays: 365
 });
 
-console.log(store);
-
 const result: Services.IServiceParamStore = {
   find: (crit: string | number) => {
     const items = result.fetch();
-    console.log(items);
     return items.find((svc: Params.initService) => svc.service === crit);
   },
   createModel: () => ServiceParamModel(),

@@ -4,7 +4,13 @@ declare namespace Params {
     characteristics: BluetoothlePlugin.Characteristic[];
   }
   type advertising = BluetoothlePlugin.AdvertisingParams;
-  type peripheral = BluetoothlePlugin.InitPeripheralParams;
+  interface peripheral {
+    name: string;
+    /** Should user be prompted to enable Bluetooth */
+    request?: boolean;
+    /* A unique string to identify your app. Bluetooth Central background mode is required to use this, but background mode doesn't seem to require specifying the restoreKey */
+    restoreKey?: string;
+  }
   interface advertise {
     name: string;
     peripheral: peripheral;
@@ -23,7 +29,7 @@ declare namespace Services {
     ): Promise<object>;
     addService(params: Params.initService): Promise<object>;
     startAdvertising(params: Params.advertising): Promise<{ status: Status }>;
-    advertise(params: Params.advertise): Promise<any>;
+    advertise(params: Params.advertise, periphName: string): Promise<any>;
   }
   interface ICharacteristicStore {
     find(crit: string | number): BluetoothlePlugin.Characteristic;
@@ -50,6 +56,16 @@ declare namespace Services {
     getIndex(advert: BluetoothlePlugin.AdvertisingParams): number;
     remove(advert: BluetoothlePlugin.AdvertisingParams): void;
     fetch(): Array<BluetoothlePlugin.AdvertisingParams>;
+    reset(): void;
+  }
+  interface IPeripheralStore {
+    find(crit: string | number): Params.peripheral;
+    createModel(): Params.peripheral;
+    update(periph: Params.peripheral): void;
+    createModel(): Params.peripheral;
+    getIndex(periph: Params.peripheral): number;
+    remove(periph: Params.peripheral): void;
+    fetch(): Array<Params.peripheral>;
     reset(): void;
   }
 }

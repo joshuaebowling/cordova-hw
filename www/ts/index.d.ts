@@ -29,7 +29,7 @@ declare namespace Services {
     ): Promise<object>;
     addService(params: Params.initService): Promise<object>;
     startAdvertising(params: Params.advertising): Promise<{ status: Status }>;
-    advertise(params: Params.advertise): Promise<any>;
+    advertise(params: Params.advertise, periphName: string): Promise<any>;
   }
   interface ICharacteristicStore {
     find(crit: string | number): BluetoothlePlugin.Characteristic;

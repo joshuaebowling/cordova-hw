@@ -52,7 +52,7 @@ ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:5:18-52
 	android:icon
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:5:53-80
-activity#com.example.btTester2.MainActivity
+activity#com.example.btTester3.MainActivity
 ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:6:9-11:20
 	android:label
 		ADDED from /home/josh/Documents/workspace/phonegap/hw/platforms/android/app/src/main/AndroidManifest.xml:6:97-134

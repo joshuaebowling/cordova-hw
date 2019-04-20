@@ -2,7 +2,11 @@ import React, { useReducer, useState, memo } from "react";
 import { NavLink, Route } from "react-router-dom";
 import { assign } from "lodash";
 import bluetoothSerial from "../services/bluetoothSerial";
+
+import BluetoothService from "../services/bluetooth";
+
 import StatusChecker from "./StatusChecker";
+import Advertise from "./Test/Advertise";
 
 const ENABLE_STATUS = {
   NO: 0,
@@ -151,12 +155,12 @@ const EnabledDiscoverable = ({ isEnabled, isDiscoverable, dispatch }) => {
 const EnableError = memo(({ errorInfo }) => {
   return errorInfo === null ? <span /> : <p>{errorInfo}</p>;
 });
-export default () => {
+export default ({ bluetoothle }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <div>
       <div>
-        <NavLink to="/parameters">Parameters</NavLink>
+        <NavLink to="/test/advertisement">Test Advertisement</NavLink>
         <Enable isEnabled={state.enabled} dispatch={dispatch} />
         <EnableError errorInfo={state.error} />
         <p>Discovery</p>
@@ -171,6 +175,10 @@ export default () => {
             actions.updateEnabledStatus(enabled)(dispatch);
           }}
           asyncCall={() => actions.isEnabled()(dispatch)}
+        />
+        <Route
+          path="/test/advertisement"
+          render={e => <Advertise bluetoothle={bluetoothle} />}
         />
       </div>
     </div>

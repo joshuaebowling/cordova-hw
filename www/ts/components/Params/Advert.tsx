@@ -60,14 +60,20 @@ const Advert = ({ advert }) => {
                 onChange={setFieldValue}
                 onBlur={setFieldTouched}
               /> */}
-              <select
+              {/* <select
                 name="service"
                 id="service"
                 value={values.service}
                 onChange={handleChange}
               >
                 {serviceOptions}
-              </select>
+              </select> */}
+              <input
+                name="service"
+                id="servcie"
+                value={values.service}
+                onChange={handleChange}
+              />
             </fieldset>
             <fieldset>
               <label htmlFor="mode">Mode</label>

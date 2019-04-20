@@ -2,14 +2,12 @@ import React, { useReducer, useState, memo } from "react";
 import { NavLink, Route } from "react-router-dom";
 import { assign } from "lodash";
 import bluetoothSerial from "../services/bluetoothSerial";
-import BluetoothlePlugin from "cordova-plugin-bluetoothle";
 
 import BluetoothService from "../services/bluetooth";
 
 import StatusChecker from "./StatusChecker";
 import Advertise from "./Test/Advertise";
 
-const bluetoothService = new BluetoothService(bluetoothle);
 const ENABLE_STATUS = {
   NO: 0,
   YES: 1,
@@ -101,9 +99,6 @@ const actions = {
   },
   updateEnabledStatus: (enabled: boolean) => (dispatch: Function) => {
     dispatch({ type: actions.ENABLED_STATUS_RQ, payload: enabled });
-  },
-  advertise: (advert: BluetoothlePlugin.AdvertisingParamsAndroid) => {
-    bluetoothService.advertise();
   }
 };
 
@@ -160,12 +155,12 @@ const EnabledDiscoverable = ({ isEnabled, isDiscoverable, dispatch }) => {
 const EnableError = memo(({ errorInfo }) => {
   return errorInfo === null ? <span /> : <p>{errorInfo}</p>;
 });
-export default () => {
+export default ({ bluetoothle }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <div>
       <div>
-        <NavLink to="/parameters">Parameters</NavLink>
+        <NavLink to="/test/advertisement">Test Advertisement</NavLink>
         <Enable isEnabled={state.enabled} dispatch={dispatch} />
         <EnableError errorInfo={state.error} />
         <p>Discovery</p>
@@ -180,6 +175,10 @@ export default () => {
             actions.updateEnabledStatus(enabled)(dispatch);
           }}
           asyncCall={() => actions.isEnabled()(dispatch)}
+        />
+        <Route
+          path="/test/advertisement"
+          render={e => <Advertise bluetoothle={bluetoothle} />}
         />
       </div>
     </div>

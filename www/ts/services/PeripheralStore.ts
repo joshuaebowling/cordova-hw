@@ -1,7 +1,7 @@
 /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
-import { assign, remove, orderBy, last } from "lodash";
+import { remove } from "lodash";
 
 import Basil from "basil.js";
 
@@ -20,7 +20,6 @@ console.log(store);
 const result: Services.IPeripheralStore = {
   find: (crit: string | number) => {
     const items = result.fetch();
-    console.log(items);
     return items.find((periph: Params.peripheral) => periph.name === crit);
   },
   createModel: () => PeripheralModel(),

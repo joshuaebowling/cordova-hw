@@ -49366,11 +49366,9 @@ var store = new basil_js_1.default({
   storage: "local",
   expireDays: 365
 });
-console.log(store);
 var result = {
   find: function find(crit) {
     var items = result.fetch();
-    console.log(items);
     return items.find(function (svc) {
       return svc.service === crit;
     });
@@ -49413,7 +49411,33 @@ var result = {
   }
 };
 exports.default = result;
-},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/ServiceParams":"models/ServiceParams.ts"}],"services/AdvertiseStore.ts":[function(require,module,exports) {
+},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/ServiceParams":"models/ServiceParams.ts"}],"models/Advert.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var lodash_1 = require("lodash");
+
+var advert = {
+  //  services: ["1234"], //iOS
+  service: "1234",
+  mode: "balanced",
+  connectable: true,
+  timeout: 20000,
+  txPowerLevel: "high",
+  includeDeviceName: true,
+  includeTxPowerLevel: true
+};
+var txPowerLevels = ["high", "low", "ultralow", "medium"];
+exports.txPowerLevels = txPowerLevels;
+
+exports.default = function () {
+  return lodash_1.clone(advert);
+};
+},{"lodash":"../../node_modules/lodash/lodash.js"}],"services/AdvertiseStore.ts":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -49431,7 +49455,7 @@ var lodash_1 = require("lodash");
 
 var basil_js_1 = __importDefault(require("basil.js"));
 
-var Characteristic_1 = __importDefault(require("../models/Characteristic"));
+var Advert_1 = __importDefault(require("../models/Advert"));
 
 var KEY = "bluetooth-testing-suite-advertisement";
 var store = new basil_js_1.default({
@@ -49444,16 +49468,16 @@ var result = {
   find: function find(crit) {
     var items = result.fetch();
     return items.find(function (advert) {
-      return advert.service === crit;
+      return advert.uuid === crit;
     });
   },
   createModel: function createModel() {
-    return Characteristic_1.default();
+    return Advert_1.default();
   },
   update: function update(adv) {
-    if (adv.service === "") return;
+    if (adv.uuid === "") return;
     var advs = result.fetch();
-    var found = result.find(adv.service);
+    var found = result.find(adv.uuid);
 
     if (!found) {
       advs.push(adv);
@@ -49484,7 +49508,100 @@ var result = {
   }
 };
 exports.default = result;
-},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/Characteristic":"models/Characteristic.ts"}],"components/Services.tsx":[function(require,module,exports) {
+},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/Advert":"models/Advert.ts"}],"models/Peripheral.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var lodash_1 = require("lodash");
+
+var Peripheral = {
+  // this is only characteristic!!!
+  name: "name",
+  restoreKey: "",
+  request: true
+};
+
+exports.default = function () {
+  return lodash_1.clone(Peripheral);
+};
+},{"lodash":"../../node_modules/lodash/lodash.js"}],"services/PeripheralStore.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var lodash_1 = require("lodash");
+
+var basil_js_1 = __importDefault(require("basil.js"));
+
+var Peripheral_1 = __importDefault(require("../models/Peripheral"));
+
+var KEY = "bluetooth-testing-suite-peripheral";
+var store = new basil_js_1.default({
+  namespace: KEY,
+  storages: ["cookie", "local"],
+  storage: "local",
+  expireDays: 365
+});
+console.log(store);
+var result = {
+  find: function find(crit) {
+    var items = result.fetch();
+    return items.find(function (periph) {
+      return periph.name === crit;
+    });
+  },
+  createModel: function createModel() {
+    return Peripheral_1.default();
+  },
+  update: function update(periph) {
+    if (periph.name === "") return;
+    var periphs = result.fetch();
+    var found = result.find(periph.name);
+
+    if (!found) {
+      periphs.push(periph);
+    } else {
+      var index = result.getIndex(periph);
+      periphs[index] = periph;
+    }
+
+    store.set(KEY, periphs);
+  },
+  getIndex: function getIndex(periph) {
+    return result.fetch().map(function (periph) {
+      return periph.name;
+    }).indexOf(periph.name);
+  },
+  remove: function remove(periph) {
+    var periphs = result.fetch();
+    lodash_1.remove(periphs, function (peripha) {
+      return peripha.name === periph.name;
+    });
+    store.set(KEY, periphs);
+  },
+  fetch: function fetch() {
+    var fetched = store.get(KEY) || [];
+    return fetched;
+  },
+  reset: function reset() {
+    return store.set(KEY, null);
+  }
+};
+exports.default = result;
+},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/Peripheral":"models/Peripheral.ts"}],"components/Services.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -68354,13 +68471,18 @@ var react_router_dom_1 = require("react-router-dom");
 
 var AdvertiseStore_1 = __importDefault(require("../../services/AdvertiseStore"));
 
-var AdvertLinks = function AdvertLinks(_ref) {
-  var adverts = _ref.adverts;
+var AdvertBody = function AdvertBody(_ref) {
+  var adverts = _ref.adverts,
+      onDelete = _ref.onDelete;
   return adverts.map(function (adv, index) {
-    return react_1.default.createElement(react_router_dom_1.Link, {
+    return react_1.default.createElement("tr", null, react_1.default.createElement("td", null, " ", react_1.default.createElement(react_router_dom_1.Link, {
       key: index,
       to: "/parameters/advert/".concat(adv.uuid)
-    }, adv.uuid);
+    }, adv.uuid)), react_1.default.createElement("td", null, react_1.default.createElement("button", {
+      onClick: function onClick(e) {
+        return onDelete(adv);
+      }
+    }, "Delete")));
   });
 };
 
@@ -68374,9 +68496,13 @@ var Adverts = function Adverts(_ref2) {
 
   return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Adverts"), react_1.default.createElement(react_router_dom_1.Link, {
     to: "/parameters/advertnew"
-  }, "New Advert"), react_1.default.createElement(AdvertLinks, {
-    adverts: adverts
-  }));
+  }, "New Advert"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "UUID"), react_1.default.createElement("th", null, "actions"))), react_1.default.createElement("tbody", null, react_1.default.createElement(AdvertBody, {
+    adverts: adverts,
+    onDelete: function onDelete(advert) {
+      AdvertiseStore_1.default.remove(advert);
+      setAdverts(AdvertiseStore_1.default.fetch());
+    }
+  }))));
 };
 
 exports.default = Adverts;
@@ -68397,26 +68523,160 @@ var react_1 = __importDefault(require("react"));
 
 var formik_1 = require("formik");
 
-var react_select_1 = require("react-select");
+var Advert_1 = require("../../models/Advert");
+
+var ServiceParamStore_1 = __importDefault(require("../../services/ServiceParamStore"));
 
 var AdvertiseStore_1 = __importDefault(require("../../services/AdvertiseStore"));
 
 var Advert = function Advert(_ref) {
   var advert = _ref.advert;
+  console.log("advert", advert);
   return react_1.default.createElement(formik_1.Formik, {
     onSubmit: function onSubmit(values, _ref2) {
       var setSubmitting = _ref2.setSubmitting;
-      console.log(values);
       AdvertiseStore_1.default.update(values);
-      setTimeout(function () {
-        alert(JSON.stringify(values, null, 2));
-        setSubmitting(false);
-      }, 500);
     },
     initialValues: advert
   }, function (props) {
     var values = props.values,
         touched = props.touched,
+        setFieldValue = props.setFieldValue,
+        setFieldTouched = props.setFieldTouched,
+        errors = props.errors,
+        dirty = props.dirty,
+        isSubmitting = props.isSubmitting,
+        handleChange = props.handleChange,
+        handleBlur = props.handleBlur,
+        handleSubmit = props.handleSubmit,
+        handleReset = props.handleReset;
+    console.log("values", values);
+    var modeOptions = ["balanced", "lowLatency", "lowPower"].map(function (o) {
+      return react_1.default.createElement("option", {
+        value: o
+      }, o);
+    });
+    var serviceOptions = ServiceParamStore_1.default.fetch().map(function (svc) {
+      return react_1.default.createElement("option", {
+        value: svc.service
+      }, svc.service);
+    });
+    return react_1.default.createElement("form", {
+      onSubmit: handleSubmit
+    }, react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "uuid"
+    }, "UUID"), react_1.default.createElement("input", {
+      type: "text",
+      id: "uuid",
+      value: values.uuid,
+      onChange: handleChange
+    })), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "service"
+    }, "Service"), react_1.default.createElement("input", {
+      name: "service",
+      id: "servcie",
+      value: values.service,
+      onChange: handleChange
+    })), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "mode"
+    }, "Mode"), react_1.default.createElement("select", {
+      id: "mode",
+      name: "mode",
+      onChange: handleChange,
+      value: values.mode
+    }, modeOptions)), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "connectable"
+    }, "Connectable"), react_1.default.createElement("select", {
+      name: "connectable",
+      id: "connectable",
+      value: values.connectable,
+      onChange: handleChange
+    }, react_1.default.createElement("option", {
+      value: true
+    }, "True"), react_1.default.createElement("option", {
+      value: false
+    }, "False"))), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "timeout"
+    }, "Timeout"), react_1.default.createElement("input", {
+      type: "number",
+      name: "timeout",
+      id: "timeout",
+      value: values.timeout,
+      onChange: handleChange
+    })), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "txPowerLevel"
+    }, "TX Power Level"), react_1.default.createElement("select", {
+      name: "txPowerLevel",
+      id: "txPowerLevel",
+      value: values.txPowerLevel,
+      onChange: handleChange
+    }, Advert_1.txPowerLevels.map(function (pl) {
+      return react_1.default.createElement("option", {
+        value: pl
+      }, pl);
+    }))), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "includeDeviceName"
+    }, "Include Device Name"), react_1.default.createElement("select", {
+      name: "includeDeviceName",
+      id: "includeDeviceName",
+      value: values.includeDeviceName,
+      onChange: handleChange
+    }, react_1.default.createElement("option", {
+      value: true
+    }, "Yes"), react_1.default.createElement("option", {
+      value: false
+    }, "No"))), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "includeTXPowerLevel"
+    }, "Include TX Power Level"), react_1.default.createElement("select", {
+      name: "includeTxPowerLevel",
+      id: "includeTxPowerLevel",
+      value: values.includeTxPowerLevel,
+      onChange: handleChange
+    }, react_1.default.createElement("option", {
+      value: true
+    }, "Yes"), react_1.default.createElement("option", {
+      value: false
+    }, "No"))), react_1.default.createElement("button", {
+      type: "submit",
+      enabled: dirty
+    }, "Submit"));
+  });
+};
+
+exports.default = Advert;
+},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","../../models/Advert":"models/Advert.ts","../../services/ServiceParamStore":"services/ServiceParamStore.ts","../../services/AdvertiseStore":"services/AdvertiseStore.ts"}],"components/Params/Peripheral.tsx":[function(require,module,exports) {
+"use strict"; /// <reference path="../../../ts/index.d.ts" />
+/// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importDefault(require("react"));
+
+var formik_1 = require("formik");
+
+var PeripheralStore_1 = __importDefault(require("../../services/PeripheralStore"));
+
+var Peripheral = function Peripheral(_ref) {
+  var peripheral = _ref.peripheral;
+  return react_1.default.createElement(formik_1.Formik, {
+    onSubmit: function onSubmit(values, _ref2) {
+      var setSubmitting = _ref2.setSubmitting;
+      PeripheralStore_1.default.update(values);
+    },
+    initialValues: peripheral
+  }, function (props) {
+    var values = props.values,
+        touched = props.touched,
+        setFieldValue = props.setFieldValue,
+        setFieldTouched = props.setFieldTouched,
         errors = props.errors,
         dirty = props.dirty,
         isSubmitting = props.isSubmitting,
@@ -68426,48 +68686,124 @@ var Advert = function Advert(_ref) {
         handleReset = props.handleReset;
     return react_1.default.createElement("form", {
       onSubmit: handleSubmit
-    }, react_1.default.createElement("label", {
-      htmlFor: "uuid"
-    }, "UUID"), react_1.default.createElement("input", {
+    }, react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "name"
+    }, "Name"), react_1.default.createElement("input", {
       type: "text",
-      id: "uuid",
-      value: values.uuid,
+      id: "name",
+      value: values.name,
       onChange: handleChange
-    }), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
-      htmlFor: "service"
-    }, "Service"), react_1.default.createElement("input", {
+    })), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "restoreKey"
+    }, "Restore Key"), react_1.default.createElement("input", {
       type: "text",
-      name: "service",
-      id: "service"
-    }), react_1.default.createElement("label", {
-      htmlFor: "mode"
-    }, "Mode"), react_1.default.createElement(react_select_1.Select, {
-      value: values.mode,
-      options: ["balanced", "lowLatency", "lowPower"].map(function (o) {
-        return {
-          value: o,
-          label: o
-        };
-      }),
+      id: "restoreKey",
+      value: values.restoreKey,
       onChange: handleChange
-    }), react_1.default.createElement("label", {
-      htmlFor: "connectable"
-    }, "Connectable"), react_1.default.createElement("label", {
-      htmlFor: "timeout"
-    }, "Timeout"), react_1.default.createElement("label", {
-      htmlFor: "txPowerLevel"
-    }, "TX Power Level"), react_1.default.createElement("label", {
-      htmlFor: "includeDeviceName"
-    }, "Include Device Name"), react_1.default.createElement("label", {
-      htmlFor: "includeTXPowerLevel"
-    }, "Include TX Power Level")), react_1.default.createElement("button", {
-      type: "submit"
+    })), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "request"
+    }, "Request enable bluetooth"), react_1.default.createElement("select", {
+      id: "request",
+      value: values.request,
+      onChange: handleChange
+    }, react_1.default.createElement("option", {
+      value: true
+    }, "True"), react_1.default.createElement("option", {
+      value: false
+    }, "False"))), react_1.default.createElement("button", {
+      type: "submit",
+      enabled: dirty
     }, "Submit"));
   });
 };
 
-exports.default = Advert;
-},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","react-select":"../../node_modules/react-select/dist/react-select.esm.js","../../services/AdvertiseStore":"services/AdvertiseStore.ts"}],"components/ManageParams.tsx":[function(require,module,exports) {
+exports.default = Peripheral;
+},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","../../services/PeripheralStore":"services/PeripheralStore.ts"}],"components/Params/Peripherals.tsx":[function(require,module,exports) {
+"use strict"; /// <reference path="../../../ts/index.d.ts" />
+/// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importStar(require("react"));
+
+var react_router_dom_1 = require("react-router-dom");
+
+var lodash_1 = require("lodash");
+
+var PeripheralStore_1 = __importDefault(require("../../services/PeripheralStore"));
+
+var Peripheral_1 = __importDefault(require("./Peripheral"));
+
+var Peripherals = function Peripherals(_ref) {
+  var match = _ref.match;
+
+  var _react_1$useState = react_1.useState(PeripheralStore_1.default.fetch()),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      peripherals = _react_1$useState2[0],
+      setPeripherals = _react_1$useState2[1];
+
+  var PeripheralLinks = function PeripheralLinks() {
+    return peripherals.map(function (pe) {
+      return react_1.default.createElement(Peripheral_1.default, {
+        peripheral: pe
+      });
+    });
+  };
+
+  var PeripheralBody = function PeripheralBody() {
+    var onDelete = function onDelete(pe) {
+      PeripheralStore_1.default.remove(pe);
+      setPeripherals(PeripheralStore_1.default.fetch());
+    };
+
+    var result = lodash_1.map(peripherals, function (pe, i) {
+      return react_1.default.createElement("tr", {
+        key: i
+      }, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
+        to: "".concat(match.url, "/peripheral/").concat(pe.name),
+        peripheral: pe
+      }, pe.name)), react_1.default.createElement("td", null, react_1.default.createElement("button", {
+        onClick: function onClick(e) {
+          return onDelete(pe);
+        }
+      }, "Delete")));
+    });
+    return result;
+  };
+
+  return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Peripherals"), react_1.default.createElement(react_router_dom_1.Link, {
+    to: "".concat(match.url, "/peripheralnew")
+  }, "Add New Peripheral"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "Name"), react_1.default.createElement("th", null, "actions"))), react_1.default.createElement("tbody", null, react_1.default.createElement(PeripheralBody, null))));
+};
+
+exports.default = Peripherals;
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../../services/PeripheralStore":"services/PeripheralStore.ts","./Peripheral":"components/Params/Peripheral.tsx"}],"components/ManageParams.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -68491,6 +68827,8 @@ var ServiceParamStore_1 = __importDefault(require("../services/ServiceParamStore
 
 var AdvertiseStore_1 = __importDefault(require("../services/AdvertiseStore"));
 
+var PeripheralStore_1 = __importDefault(require("../services/PeripheralStore"));
+
 var Services_1 = __importDefault(require("./Services"));
 
 var Service_1 = __importDefault(require("./Params/Service"));
@@ -68503,15 +68841,21 @@ var Adverts_1 = __importDefault(require("./Params/Adverts"));
 
 var Advert_1 = __importDefault(require("./Params/Advert"));
 
+var Peripherals_1 = __importDefault(require("./Params/Peripherals"));
+
+var Peripheral_1 = __importDefault(require("./Params/Peripheral"));
+
 var ManageParams = function ManageParams(_ref) {
   var match = _ref.match;
   return react_1.default.createElement("div", null, react_1.default.createElement("nav", null, react_1.default.createElement(react_router_dom_1.NavLink, {
     to: "".concat(match.url, "/Services")
-  }, "Services"), react_1.default.createElement(react_router_dom_1.NavLink, {
+  }, "Services"), " |", react_1.default.createElement(react_router_dom_1.NavLink, {
     to: "".concat(match.url, "/Characteristics")
-  }, "Characteristics"), react_1.default.createElement(react_router_dom_1.NavLink, {
-    to: "".concat(match.url, "/Advertisements")
-  }, "Advertisements")), react_1.default.createElement(react_router_dom_1.Route, {
+  }, "Characteristics"), " |", react_1.default.createElement(react_router_dom_1.NavLink, {
+    to: "".concat(match.url, "/Adverts")
+  }, "Advertisements"), " |", react_1.default.createElement(react_router_dom_1.NavLink, {
+    to: "".concat(match.url, "/Peripherals")
+  }, "Peripherals")), react_1.default.createElement(react_router_dom_1.Route, {
     path: "".concat(match.url, "/services"),
     render: function render(e) {
       return react_1.default.createElement(Services_1.default, {
@@ -68572,7 +68916,9 @@ var ManageParams = function ManageParams(_ref) {
     path: "".concat(match.url, "/advert/:uuid"),
     render: function render(_ref6) {
       var match = _ref6.match;
+      console.log("match", match.params);
       var advert = AdvertiseStore_1.default.find(match.params.uuid);
+      console.log("adv", advert);
       return react_1.default.createElement(Advert_1.default, {
         advert: advert
       });
@@ -68585,11 +68931,36 @@ var ManageParams = function ManageParams(_ref) {
         advert: AdvertiseStore_1.default.createModel()
       });
     }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/peripherals"),
+    render: function render(e) {
+      return react_1.default.createElement(Peripherals_1.default, {
+        match: match
+      });
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/peripheral/:name"),
+    render: function render(_ref8) {
+      var match = _ref8.match;
+      console.log("match", match.params);
+      var periph = PeripheralStore_1.default.find(match.params.name);
+      return react_1.default.createElement(Peripheral_1.default, {
+        peripheral: periph
+      });
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/peripheralnew"),
+    render: function render(_ref9) {
+      var match = _ref9.match;
+      return react_1.default.createElement(Peripheral_1.default, {
+        peripheral: PeripheralStore_1.default.createModel()
+      });
+    }
   }));
 };
 
 exports.default = ManageParams;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/CharacteristicStore":"services/CharacteristicStore.ts","../services/ServiceParamStore":"services/ServiceParamStore.ts","../services/AdvertiseStore":"services/AdvertiseStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx","./Params/Characteristics":"components/Params/Characteristics.tsx","./Params/Characteristic":"components/Params/Characteristic.tsx","./Params/Adverts":"components/Params/Adverts.tsx","./Params/Advert":"components/Params/Advert.tsx"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/CharacteristicStore":"services/CharacteristicStore.ts","../services/ServiceParamStore":"services/ServiceParamStore.ts","../services/AdvertiseStore":"services/AdvertiseStore.ts","../services/PeripheralStore":"services/PeripheralStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx","./Params/Characteristics":"components/Params/Characteristics.tsx","./Params/Characteristic":"components/Params/Characteristic.tsx","./Params/Adverts":"components/Params/Adverts.tsx","./Params/Advert":"components/Params/Advert.tsx","./Params/Peripherals":"components/Params/Peripherals.tsx","./Params/Peripheral":"components/Params/Peripheral.tsx"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
 /*global cordova*/
 module.exports = {
 
@@ -68797,7 +69168,324 @@ var StatusChecker = function StatusChecker(_ref) {
 };
 
 exports.default = StatusChecker;
-},{"react":"../../node_modules/react/index.js"}],"components/TestComponent.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js"}],"services/TestStore.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var AdvertiseStore_1 = __importDefault(require("./AdvertiseStore"));
+
+var ServiceParamStore_1 = __importDefault(require("./ServiceParamStore"));
+
+var CharacteristicStore_1 = __importDefault(require("./CharacteristicStore"));
+
+var PeripheralStore_1 = __importDefault(require("./PeripheralStore"));
+
+var result = {
+  advertisements: function advertisements() {
+    return AdvertiseStore_1.default.fetch();
+  },
+  getService: function getService(serviceName) {
+    var service = ServiceParamStore_1.default.find(serviceName);
+    service.characteristics = service.characteristics.map(function (name) {
+      return CharacteristicStore_1.default.find(name);
+    });
+    service.characteristics = service.characteristics.filter(function (x) {
+      return x !== undefined;
+    });
+    return service;
+  },
+  getCharacteristics: function getCharacteristics(uuids) {
+    return uuids.map(function (uuid) {
+      return CharacteristicStore_1.default.find(uuid);
+    });
+  },
+  getTestData: function getTestData(advertiseUUID, periphName) {
+    var advert = AdvertiseStore_1.default.find(advertiseUUID);
+    var service = result.getService(advert.service);
+    var periph = PeripheralStore_1.default.find(periphName);
+    var paramPackage = {
+      advertisement: AdvertiseStore_1.default.find(advertiseUUID),
+      service: service,
+      peripheral: periph
+    };
+    return paramPackage;
+  },
+  getPeripherals: function getPeripherals() {
+    return PeripheralStore_1.default.fetch();
+  }
+};
+exports.default = result;
+},{"./AdvertiseStore":"services/AdvertiseStore.ts","./ServiceParamStore":"services/ServiceParamStore.ts","./CharacteristicStore":"services/CharacteristicStore.ts","./PeripheralStore":"services/PeripheralStore.ts"}],"services/bluetooth.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+}); // bluetoothle is a global var created/set by cordova
+/// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+var advertisementParams, app, getAdvertisingParams, initialize, isAdvertise, onErr, setAdvertisingParams, startAdvertise, stopAdvertise, $advertiseInfo;
+
+var BluetoothService =
+/*#__PURE__*/
+function () {
+  function BluetoothService(bluetoothle) {
+    _classCallCheck(this, BluetoothService);
+
+    this.bluetoothle = bluetoothle;
+    this.initializePeripheral = this.initializePeripheral.bind(this);
+    this.initialize = this.initialize.bind(this);
+    this.addService = this.addService.bind(this);
+    this.isAdvertising = this.isAdvertising.bind(this);
+    this.startAdvertising = this.startAdvertising.bind(this);
+  }
+
+  _createClass(BluetoothService, [{
+    key: "initialize",
+    value: function initialize() {
+      var _this = this;
+
+      console.log('initialize');
+      return new Promise(function (resolve, reject) {
+        _this.bluetoothle.initialize(resolve);
+      });
+    }
+  }, {
+    key: "initializePeripheral",
+    value: function initializePeripheral(params) {
+      var _this2 = this;
+
+      console.log('initializePeripheral');
+      return new Promise(function (resolve, reject) {
+        _this2.bluetoothle.initializePeripheral(resolve, reject, params);
+      });
+    }
+  }, {
+    key: "addService",
+    value: function addService(params) {
+      var _this3 = this;
+
+      console.log('addservice');
+      return new Promise(function (resolve, reject) {
+        /// TODO check for existent service against params
+        _this3.bluetoothle.addService(resolve, reject, params);
+      });
+    }
+  }, {
+    key: "isAdvertising",
+    value: function isAdvertising() {
+      var _this4 = this;
+
+      console.log('isAdvertising');
+      return new Promise(function (resolve, reject) {
+        _this4.bluetoothle.isAdvertising(resolve, reject);
+      });
+    }
+  }, {
+    key: "startAdvertising",
+    value: function startAdvertising(params) {
+      console.log('startAdvertising');
+      var self = this;
+      return new Promise(function (resolve, reject) {
+        self.isAdvertising().then(function (result) {
+          if (!result.status) {
+            self.bluetoothle.startAdvertising(resolve, reject, params);
+          }
+        });
+      });
+    }
+  }, {
+    key: "advertise",
+    value: function advertise(params) {
+      console.log('advertise', params);
+      var self = this;
+      var serviceParams = params.serviceParams,
+          peripheralParams = params.peripheralParams,
+          advertisementParams = params.advertisementParams;
+      console.log(params);
+      var advertiseResult = {
+        intialize: {},
+        service: {},
+        peripheral: {},
+        advertise: {}
+      };
+      return new Promise(function (resolve, reject) {
+        self.initialize().then(function () {
+          return self.initializePeripheral(peripheralParams);
+        }).then(function () {
+          return self.addService(serviceParams);
+        }).then(function () {
+          return self.startAdvertising(advertisementParams).then(function (r) {
+            return alert(JSON.stringify(r)).catch(function (e) {
+              return onErr(e);
+            });
+          });
+        }); // self.initialize()
+        // .then((result: any) => { alert(JSON.stringify(result)); advertiseResult.initialize = result; self.initializePeripheral(peripheralParams); })
+        // .then((result: any) => {
+        //         alert(JSON.stringify(result));
+        //         advertiseResult.peripheral = result;
+        //         self.addService(serviceParams);
+        //     })
+        //     .then((result: any) => { alert(JSON.stringify(result)); advertiseResult.peripherial = result; self.startAdvertising(advertisementParams); })
+        //     .then((result:any) => {
+        //         alert(JSON.stringify(result));
+        //         advertiseResult.advertise = result;
+        //         if( "advertisingStarted" === "advertisingStarted") {
+        //             resolve(advertiseResult);
+        //         } else {
+        //             reject(advertiseResult);
+        //         }
+        //     })
+        // ;
+      });
+    }
+  }]);
+
+  return BluetoothService;
+}();
+
+exports.default = BluetoothService;
+},{}],"components/Test/Advertise.tsx":[function(require,module,exports) {
+"use strict";
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importStar(require("react"));
+
+var TestStore_1 = __importDefault(require("../../services/TestStore"));
+
+var lodash_1 = require("lodash");
+
+var bluetooth_1 = __importDefault(require("../../services/bluetooth"));
+
+var CurrentAdvertisement = function CurrentAdvertisement(_ref) {
+  var advert = _ref.advert;
+  return advert ? react_1.default.createElement("div", null, "Advert: ", advert.uuid) : react_1.default.createElement("span", null);
+};
+
+var CurrentPeriph = function CurrentPeriph(_ref2) {
+  var periph = _ref2.periph;
+  return periph ? react_1.default.createElement("div", null, "Peripheral: ", periph.name) : react_1.default.createElement("span", null);
+};
+
+var StartTest = function StartTest(_ref3) {
+  var testData = _ref3.testData;
+  var bluetoothService = new bluetooth_1.default(bluetoothle);
+
+  if (testData) {
+    return react_1.default.createElement("button", {
+      onClick: function onClick(e) {
+        console.log(testData);
+        console.log("using advertise");
+        bluetoothService.advertise({
+          serviceParams: testData.service,
+          peripheralParams: testData.peripheral,
+          advertisementParams: testData.advertisement
+        });
+      }
+    }, "Advertise");
+  } else {
+    return react_1.default.createElement("span", null);
+  }
+};
+
+var Advertise = function Advertise(_ref4) {
+  var bluetoothle = _ref4.bluetoothle;
+
+  var _react_1$useState = react_1.useState(null),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      advert = _react_1$useState2[0],
+      setAdvert = _react_1$useState2[1];
+
+  var _react_1$useState3 = react_1.useState(null),
+      _react_1$useState4 = _slicedToArray(_react_1$useState3, 2),
+      periph = _react_1$useState4[0],
+      setPeriph = _react_1$useState4[1];
+
+  var _react_1$useState5 = react_1.useState(null),
+      _react_1$useState6 = _slicedToArray(_react_1$useState5, 2),
+      testData = _react_1$useState6[0],
+      setTestData = _react_1$useState6[1];
+
+  var _react_1$useState7 = react_1.useState(false),
+      _react_1$useState8 = _slicedToArray(_react_1$useState7, 2),
+      testDataIsNew = _react_1$useState8[0],
+      setTestDataIsNew = _react_1$useState8[1];
+
+  react_1.useEffect(function () {
+    if (advert && periph) {
+      var tData = TestStore_1.default.getTestData(advert.uuid, periph.name);
+      setTestData(tData);
+      setTestDataIsNew(false);
+    }
+  });
+  return react_1.default.createElement("div", null, react_1.default.createElement("h3", null, "Test Advertisement"), react_1.default.createElement(CurrentAdvertisement, {
+    advert: advert
+  }), react_1.default.createElement(CurrentPeriph, {
+    periph: periph
+  }), react_1.default.createElement("h4", null, "Adverts"), react_1.default.createElement("div", null, TestStore_1.default.advertisements().map(function (a) {
+    return react_1.default.createElement("button", {
+      onClick: function onClick(e) {
+        setAdvert(a);
+      }
+    }, a.uuid);
+  })), react_1.default.createElement("h4", null, "Peripherals"), react_1.default.createElement("div", null, [TestStore_1.default.getPeripherals()].map(function (p) {
+    p = lodash_1.isArray(p) ? lodash_1.first(p) : p;
+    return react_1.default.createElement("button", {
+      onClick: function onClick(e) {
+        setPeriph(p);
+      }
+    }, p.name);
+  })), react_1.default.createElement(StartTest, {
+    testData: testData
+  }));
+};
+
+exports.default = Advertise;
+},{"react":"../../node_modules/react/index.js","../../services/TestStore":"services/TestStore.ts","lodash":"../../node_modules/lodash/lodash.js","../../services/bluetooth":"services/bluetooth.ts"}],"components/TestComponent.tsx":[function(require,module,exports) {
 "use strict";
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -68837,6 +69525,8 @@ var lodash_1 = require("lodash");
 var bluetoothSerial_1 = __importDefault(require("../services/bluetoothSerial"));
 
 var StatusChecker_1 = __importDefault(require("./StatusChecker"));
+
+var Advertise_1 = __importDefault(require("./Test/Advertise"));
 
 var ENABLE_STATUS = {
   NO: 0,
@@ -69015,15 +69705,17 @@ var EnableError = react_1.memo(function (_ref4) {
   return errorInfo === null ? react_1.default.createElement("span", null) : react_1.default.createElement("p", null, errorInfo);
 });
 
-exports.default = function () {
+exports.default = function (_ref5) {
+  var bluetoothle = _ref5.bluetoothle;
+
   var _react_1$useReducer = react_1.useReducer(reducer, initialState),
       _react_1$useReducer2 = _slicedToArray(_react_1$useReducer, 2),
       state = _react_1$useReducer2[0],
       dispatch = _react_1$useReducer2[1];
 
   return react_1.default.createElement("div", null, react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.NavLink, {
-    to: "/parameters"
-  }, "Parameters"), react_1.default.createElement(Enable, {
+    to: "/test/advertisement"
+  }, "Test Advertisement"), react_1.default.createElement(Enable, {
     isEnabled: state.enabled,
     dispatch: dispatch
   }), react_1.default.createElement(EnableError, {
@@ -69043,9 +69735,16 @@ exports.default = function () {
     asyncCall: function asyncCall() {
       return actions.isEnabled()(dispatch);
     }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "/test/advertisement",
+    render: function render(e) {
+      return react_1.default.createElement(Advertise_1.default, {
+        bluetoothle: bluetoothle
+      });
+    }
   })));
 };
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../services/bluetoothSerial":"services/bluetoothSerial.ts","./StatusChecker":"components/StatusChecker.tsx"}],"components/app.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../services/bluetoothSerial":"services/bluetoothSerial.ts","./StatusChecker":"components/StatusChecker.tsx","./Test/Advertise":"components/Test/Advertise.tsx"}],"components/app.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -69066,20 +69765,24 @@ var ManageParams_1 = __importDefault(require("./ManageParams"));
 
 var TestComponent_1 = __importDefault(require("./TestComponent"));
 
-var App = function App() {
+var App = function App(_ref) {
+  var bluetoothle = _ref.bluetoothle;
+  console.log("btle", bluetoothle);
   return react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.HashRouter, null, react_1.default.createElement("div", null, react_1.default.createElement(react_router_dom_1.NavLink, {
     to: "/test"
-  }, "Test"), react_1.default.createElement(react_router_dom_1.NavLink, {
+  }, "Test"), " |", react_1.default.createElement(react_router_dom_1.NavLink, {
     to: "/parameters"
   }, "Parameters"), react_1.default.createElement(react_router_dom_1.Route, {
     path: "/test",
     render: function render() {
-      return react_1.default.createElement(TestComponent_1.default, null);
+      return react_1.default.createElement(TestComponent_1.default, {
+        bluetoothle: bluetoothle
+      });
     }
   }), react_1.default.createElement(react_router_dom_1.Route, {
     path: "/parameters",
-    render: function render(_ref) {
-      var match = _ref.match;
+    render: function render(_ref2) {
+      var match = _ref2.match;
       return react_1.default.createElement(ManageParams_1.default, {
         match: match
       });
@@ -69110,25 +69813,28 @@ var app_1 = __importDefault(require("./components/app"));
 var app = {
   // Application Constructor
   initialize: function initialize() {
-    document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+    document.addEventListener("deviceready", this.onDeviceReady.bind(this), false);
   },
   // deviceready Event Handler
   //
   // Bind any cordova events here. Common events are:
   // 'pause', 'resume', etc.
   onDeviceReady: function onDeviceReady() {
-    document.removeEventListener('deviceready', this.onDeviceReady.bind(this), false);
+    document.removeEventListener("deviceready", this.onDeviceReady.bind(this), false);
     window.React = react_1.default;
-    react_dom_1.default.render(react_1.default.createElement(app_1.default, null), document.getElementById("wrapperContainer"));
+    window.bluetoothle = bluetoothle;
+    react_dom_1.default.render(react_1.default.createElement(app_1.default, {
+      bluetoothle: bluetoothle
+    }), document.getElementById("wrapperContainer"));
   },
   // Update DOM on a Received Event
   receivedEvent: function receivedEvent(id) {
     var parentElement = document.getElementById(id);
-    var listeningElement = parentElement.querySelector('.listening');
-    var receivedElement = parentElement.querySelector('.received');
-    listeningElement.setAttribute('style', 'display:none;');
-    receivedElement.setAttribute('style', 'display:block;');
-    console.log('Received Event: ' + id);
+    var listeningElement = parentElement.querySelector(".listening");
+    var receivedElement = parentElement.querySelector(".received");
+    listeningElement.setAttribute("style", "display:none;");
+    receivedElement.setAttribute("style", "display:block;");
+    console.log("Received Event: " + id);
   }
 };
 app.initialize();
@@ -69159,7 +69865,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39919" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40085" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
