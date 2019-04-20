@@ -9,7 +9,7 @@ import CharacteristicStore from "../services/CharacteristicStore";
 import ServiceParamStore from "../services/ServiceParamStore";
 import AdvertiseStore from "../services/AdvertiseStore";
 import PeripheralStore from "../services/PeripheralStore";
-
+import ScanStore from "../services/ScanStore";
 import Services from "./Services";
 import Service from "./Params/Service";
 import Characteristics from "./Params/Characteristics";
@@ -18,6 +18,8 @@ import Adverts from "./Params/Adverts";
 import Advert from "./Params/Advert";
 import Peripherals from "./Params/Peripherals";
 import Peripheral from "./Params/Peripheral";
+import Scans from "./Params/Scans";
+import Scan from "./Params/Scan";
 
 const ManageParams: Components.ServiceParams = ({ match }) => {
   return (
@@ -27,6 +29,7 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
         <NavLink to={`${match.url}/Characteristics`}>Characteristics</NavLink> |
         <NavLink to={`${match.url}/Adverts`}>Advertisements</NavLink> |
         <NavLink to={`${match.url}/Peripherals`}>Peripherals</NavLink>
+        <NavLink to={`${match.url}/Scans`}>Scans</NavLink>
       </nav>
       <Route
         path={`${match.url}/services`}
@@ -112,8 +115,24 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
       />
       <Route
         path={`${match.url}/peripheralnew`}
+        render={e => <Peripheral peripheral={PeripheralStore.createModel()} />}
+      />
+      <Route
+        path={`${match.url}/scans`}
+        render={e => <Scans match={match} />}
+      />
+      <Route
+        path={`${match.url}/scan/:name`}
         render={({ match }) => {
-          return <Peripheral peripheral={PeripheralStore.createModel()} />;
+          console.log("match", match.params);
+          const scan = ScanStore.find(match.params.name);
+          return <Scan scan={scan} />;
+        }}
+      />
+      <Route
+        path={`${match.url}/scannew`}
+        render={({ match }) => {
+          return <Scan scan={ScanStore.createModel()} />;
         }}
       />
     </div>

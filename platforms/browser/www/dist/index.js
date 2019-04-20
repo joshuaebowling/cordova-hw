@@ -5,8 +5,6 @@
 //
 // anything defined in a previous bundle is accessed via the
 // orig method which is the require for previous bundles
-
-// eslint-disable-next-line no-global-assign
 parcelRequire = (function (modules, cache, entry, globalName) {
   // Save the require from previous bundle to this closure if any
   var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
@@ -77,8 +75,16 @@ parcelRequire = (function (modules, cache, entry, globalName) {
     }, {}];
   };
 
+  var error;
   for (var i = 0; i < entry.length; i++) {
-    newRequire(entry[i]);
+    try {
+      newRequire(entry[i]);
+    } catch (e) {
+      // Save first error but execute all entries
+      if (!error) {
+        error = e;
+      }
+    }
   }
 
   if (entry.length) {
@@ -103,6 +109,13 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   // Override the current require with this new one
+  parcelRequire = newRequire;
+
+  if (error) {
+    // throw error from earlier, _after updating parcelRequire_
+    throw error;
+  }
+
   return newRequire;
 })({"../../node_modules/object-assign/index.js":[function(require,module,exports) {
 /*
@@ -29648,7 +29661,7 @@ if ("development" !== "production") {
     style: _propTypes.default.object
   });
 }
-},{"@babel/runtime/helpers/esm/inheritsLoose":"../../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../../node_modules/react/index.js","react-router":"../../node_modules/react-router-dom/node_modules/react-router/esm/react-router.js","history":"../../node_modules/history/esm/history.js","prop-types":"../../node_modules/prop-types/index.js","tiny-warning":"../../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/base64-js/index.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/inheritsLoose":"../../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../../node_modules/react/index.js","react-router":"../../node_modules/react-router-dom/node_modules/react-router/esm/react-router.js","history":"../../node_modules/history/esm/history.js","prop-types":"../../node_modules/prop-types/index.js","tiny-warning":"../../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/base64-js/index.js":[function(require,module,exports) {
 'use strict'
 
 exports.byteLength = byteLength
@@ -29801,7 +29814,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/ieee754/index.js":[function(require,module,exports) {
+},{}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/ieee754/index.js":[function(require,module,exports) {
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -29887,14 +29900,14 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/isarray/index.js":[function(require,module,exports) {
+},{}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/isarray/index.js":[function(require,module,exports) {
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/buffer/index.js":[function(require,module,exports) {
+},{}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/buffer/index.js":[function(require,module,exports) {
 
 var global = arguments[3];
 /*!
@@ -31687,7 +31700,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/base64-js/index.js","ieee754":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/ieee754/index.js","isarray":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/isarray/index.js","buffer":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/buffer/index.js"}],"../../node_modules/lodash/lodash.js":[function(require,module,exports) {
+},{"base64-js":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/base64-js/index.js","ieee754":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/ieee754/index.js","isarray":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/isarray/index.js","buffer":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/buffer/index.js"}],"../../node_modules/lodash/lodash.js":[function(require,module,exports) {
 var global = arguments[3];
 var Buffer = require("buffer").Buffer;
 var define;
@@ -48799,7 +48812,7 @@ var define;
   }
 }.call(this));
 
-},{"buffer":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/buffer/index.js"}],"../../node_modules/basil.js/build/basil.js":[function(require,module,exports) {
+},{"buffer":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/buffer/index.js"}],"../../node_modules/basil.js/build/basil.js":[function(require,module,exports) {
 var define;
 (function () {
 	// Basil
@@ -49601,7 +49614,102 @@ var result = {
   }
 };
 exports.default = result;
-},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/Peripheral":"models/Peripheral.ts"}],"components/Services.tsx":[function(require,module,exports) {
+},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/Peripheral":"models/Peripheral.ts"}],"models/Scan.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var lodash_1 = require("lodash");
+
+var model = {
+  services: ["180D", "180F"],
+  allowDuplicates: true,
+  scanMode: 2,
+  matchMode: 1,
+  matchNum: 3,
+  callbackType: 1,
+  name: ""
+};
+
+exports.default = function () {
+  return lodash_1.clone(model);
+};
+},{"lodash":"../../node_modules/lodash/lodash.js"}],"services/ScanStore.ts":[function(require,module,exports) {
+"use strict"; /// <reference path="../../ts/index.d.ts" />
+/// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var lodash_1 = require("lodash");
+
+var basil_js_1 = __importDefault(require("basil.js"));
+
+var Scan_1 = __importDefault(require("../models/Scan"));
+
+var KEY = "bluetooth-testing-suite-scan";
+var store = new basil_js_1.default({
+  namespace: KEY,
+  storages: ["cookie", "local"],
+  storage: "local",
+  expireDays: 365
+});
+var result = {
+  find: function find(crit) {
+    var items = result.fetch();
+    return items.find(function (scan) {
+      return scan.name === crit;
+    });
+  },
+  createModel: function createModel() {
+    return Scan_1.default();
+  },
+  update: function update(scan) {
+    if (scan.name === "") return;
+    var scans = result.fetch();
+    var found = result.find(scan.name);
+
+    if (!found) {
+      scans.push(scan);
+    } else {
+      var index = result.getIndex(scan);
+      scans[index] = scan;
+    }
+
+    store.set(KEY, scans);
+  },
+  getIndex: function getIndex(scan) {
+    return result.fetch().map(function (scan) {
+      return scan.name;
+    }).indexOf(scan.name);
+  },
+  remove: function remove(scan) {
+    var scans = result.fetch();
+    lodash_1.remove(scans, function (scana) {
+      return scana.name === scan.name;
+    });
+    store.set(KEY, scans);
+  },
+  fetch: function fetch() {
+    var fetched = store.get(KEY) || [];
+    return fetched;
+  },
+  reset: function reset() {
+    return store.set(KEY, null);
+  }
+};
+exports.default = result;
+},{"lodash":"../../node_modules/lodash/lodash.js","basil.js":"../../node_modules/basil.js/build/basil.js","../models/Scan":"models/Scan.ts"}],"components/Services.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -52132,7 +52240,7 @@ if ("development" !== 'production') {
   // http://fb.me/prop-types-in-prod
   module.exports = require('./factoryWithThrowingShims')();
 }
-},{"react-is":"../../node_modules/react-select/node_modules/react-is/index.js","./factoryWithTypeCheckers":"../../node_modules/react-select/node_modules/prop-types/factoryWithTypeCheckers.js"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/process/browser.js":[function(require,module,exports) {
+},{"react-is":"../../node_modules/react-select/node_modules/react-is/index.js","./factoryWithTypeCheckers":"../../node_modules/react-select/node_modules/prop-types/factoryWithTypeCheckers.js"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/process/browser.js":[function(require,module,exports) {
 
 // shim for using process in browser
 var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
@@ -52304,7 +52412,6 @@ Item.prototype.run = function () {
 };
 
 process.title = 'browser';
-process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
@@ -52381,7 +52488,7 @@ var process = require("process");
 
 
 
-},{"process":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/node_modules/process/browser.js"}],"../../node_modules/raf/index.js":[function(require,module,exports) {
+},{"process":"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/node_modules/process/browser.js"}],"../../node_modules/raf/index.js":[function(require,module,exports) {
 var global = arguments[3];
 var now = require('performance-now')
   , root = typeof window === 'undefined' ? global : window
@@ -68803,7 +68910,166 @@ var Peripherals = function Peripherals(_ref) {
 };
 
 exports.default = Peripherals;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../../services/PeripheralStore":"services/PeripheralStore.ts","./Peripheral":"components/Params/Peripheral.tsx"}],"components/ManageParams.tsx":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../../services/PeripheralStore":"services/PeripheralStore.ts","./Peripheral":"components/Params/Peripheral.tsx"}],"components/Params/Scan.tsx":[function(require,module,exports) {
+"use strict"; /// <reference path="../../../ts/index.d.ts" />
+/// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importDefault(require("react"));
+
+var formik_1 = require("formik");
+
+var ScanStore_1 = __importDefault(require("../../services/ScanStore"));
+
+var Scan = function Scan(_ref) {
+  var scan = _ref.scan;
+  return react_1.default.createElement(formik_1.Formik, {
+    onSubmit: function onSubmit(values, _ref2) {
+      var setSubmitting = _ref2.setSubmitting;
+      ScanStore_1.default.update(values);
+    },
+    initialValues: scan
+  }, function (props) {
+    var values = props.values,
+        touched = props.touched,
+        setFieldValue = props.setFieldValue,
+        setFieldTouched = props.setFieldTouched,
+        errors = props.errors,
+        dirty = props.dirty,
+        isSubmitting = props.isSubmitting,
+        handleChange = props.handleChange,
+        handleBlur = props.handleBlur,
+        handleSubmit = props.handleSubmit,
+        handleReset = props.handleReset;
+    return react_1.default.createElement("form", {
+      onSubmit: handleSubmit
+    }, react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "name"
+    }, "Name"), react_1.default.createElement("input", {
+      type: "text",
+      id: "name",
+      value: values.name,
+      onChange: handleChange
+    })), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "restoreKey"
+    }, "Restore Key"), react_1.default.createElement("input", {
+      type: "text",
+      id: "restoreKey",
+      value: values.restoreKey,
+      onChange: handleChange
+    })), react_1.default.createElement("fieldset", null, react_1.default.createElement("label", {
+      htmlFor: "request"
+    }, "Request enable bluetooth"), react_1.default.createElement("select", {
+      id: "request",
+      value: values.request,
+      onChange: handleChange
+    }, react_1.default.createElement("option", {
+      value: true
+    }, "True"), react_1.default.createElement("option", {
+      value: false
+    }, "False"))), react_1.default.createElement("button", {
+      type: "submit",
+      enabled: dirty
+    }, "Submit"));
+  });
+};
+
+exports.default = Scan;
+},{"react":"../../node_modules/react/index.js","formik":"../../node_modules/formik/dist/formik.esm.js","../../services/ScanStore":"services/ScanStore.ts"}],"components/Params/Scans.tsx":[function(require,module,exports) {
+"use strict"; /// <reference path="../../../ts/index.d.ts" />
+/// <reference path="../../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = __importStar(require("react"));
+
+var react_router_dom_1 = require("react-router-dom");
+
+var lodash_1 = require("lodash");
+
+var ScanStore_1 = __importDefault(require("../../services/ScanStore"));
+
+var Scan_1 = __importDefault(require("./Scan"));
+
+var Scans = function Scans(_ref) {
+  var match = _ref.match;
+
+  var _react_1$useState = react_1.useState(ScanStore_1.default.fetch()),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      peripherals = _react_1$useState2[0],
+      setScans = _react_1$useState2[1];
+
+  var ScanLinks = function ScanLinks() {
+    return peripherals.map(function (pe) {
+      return react_1.default.createElement(Scan_1.default, {
+        peripheral: pe
+      });
+    });
+  };
+
+  var ScanBody = function ScanBody() {
+    var onDelete = function onDelete(sc) {
+      ScanStore_1.default.remove(sc);
+      setScans(ScanStore_1.default.fetch());
+    };
+
+    var result = lodash_1.map(peripherals, function (sc, i) {
+      return react_1.default.createElement("tr", {
+        key: i
+      }, react_1.default.createElement("td", null, react_1.default.createElement(react_router_dom_1.Link, {
+        to: "".concat(match.url, "/scan/").concat(sc.name),
+        peripheral: sc
+      }, sc.name)), react_1.default.createElement("td", null, react_1.default.createElement("button", {
+        onClick: function onClick(e) {
+          return onDelete(sc);
+        }
+      }, "Delete")));
+    });
+    return result;
+  };
+
+  return react_1.default.createElement("div", null, react_1.default.createElement("h2", null, "Scans"), react_1.default.createElement(react_router_dom_1.Link, {
+    to: "".concat(match.url, "/scannew")
+  }, "Add New Scan"), react_1.default.createElement("table", null, react_1.default.createElement("thead", null, react_1.default.createElement("tr", null, react_1.default.createElement("th", null, "Name"), react_1.default.createElement("th", null, "actions"))), react_1.default.createElement("tbody", null, react_1.default.createElement(ScanBody, null))));
+};
+
+exports.default = Scans;
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","lodash":"../../node_modules/lodash/lodash.js","../../services/ScanStore":"services/ScanStore.ts","./Scan":"components/Params/Scan.tsx"}],"components/ManageParams.tsx":[function(require,module,exports) {
 "use strict"; /// <reference path="../../ts/index.d.ts" />
 /// <reference path="../../../node_modules/cordova-plugin-bluetoothle/types/index.d.ts" />
 
@@ -68829,6 +69095,8 @@ var AdvertiseStore_1 = __importDefault(require("../services/AdvertiseStore"));
 
 var PeripheralStore_1 = __importDefault(require("../services/PeripheralStore"));
 
+var ScanStore_1 = __importDefault(require("../services/ScanStore"));
+
 var Services_1 = __importDefault(require("./Services"));
 
 var Service_1 = __importDefault(require("./Params/Service"));
@@ -68845,6 +69113,10 @@ var Peripherals_1 = __importDefault(require("./Params/Peripherals"));
 
 var Peripheral_1 = __importDefault(require("./Params/Peripheral"));
 
+var Scans_1 = __importDefault(require("./Params/Scans"));
+
+var Scan_1 = __importDefault(require("./Params/Scan"));
+
 var ManageParams = function ManageParams(_ref) {
   var match = _ref.match;
   return react_1.default.createElement("div", null, react_1.default.createElement("nav", null, react_1.default.createElement(react_router_dom_1.NavLink, {
@@ -68855,7 +69127,9 @@ var ManageParams = function ManageParams(_ref) {
     to: "".concat(match.url, "/Adverts")
   }, "Advertisements"), " |", react_1.default.createElement(react_router_dom_1.NavLink, {
     to: "".concat(match.url, "/Peripherals")
-  }, "Peripherals")), react_1.default.createElement(react_router_dom_1.Route, {
+  }, "Peripherals"), react_1.default.createElement(react_router_dom_1.NavLink, {
+    to: "".concat(match.url, "/Scans")
+  }, "Scans")), react_1.default.createElement(react_router_dom_1.Route, {
     path: "".concat(match.url, "/services"),
     render: function render(e) {
       return react_1.default.createElement(Services_1.default, {
@@ -68949,18 +69223,43 @@ var ManageParams = function ManageParams(_ref) {
       });
     }
   }), react_1.default.createElement(react_router_dom_1.Route, {
-    path: "".concat(match.url, "/peripheralnew"),
+    path: "".concat(match.url, "/scannew"),
     render: function render(_ref9) {
       var match = _ref9.match;
-      return react_1.default.createElement(Peripheral_1.default, {
-        peripheral: PeripheralStore_1.default.createModel()
+      return react_1.default.createElement(Scan_1.default, {
+        scan: ScanStore_1.default.createModel()
+      });
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/scans"),
+    render: function render(e) {
+      return react_1.default.createElement(Scans_1.default, {
+        match: match
+      });
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/scan/:name"),
+    render: function render(_ref10) {
+      var match = _ref10.match;
+      console.log("match", match.params);
+      var scan = ScanStore_1.default.find(match.params.name);
+      return react_1.default.createElement(Scan_1.default, {
+        scan: scan
+      });
+    }
+  }), react_1.default.createElement(react_router_dom_1.Route, {
+    path: "".concat(match.url, "/scannew"),
+    render: function render(_ref11) {
+      var match = _ref11.match;
+      return react_1.default.createElement(Scan_1.default, {
+        scan: ScanStore_1.default.createModel()
       });
     }
   }));
 };
 
 exports.default = ManageParams;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/CharacteristicStore":"services/CharacteristicStore.ts","../services/ServiceParamStore":"services/ServiceParamStore.ts","../services/AdvertiseStore":"services/AdvertiseStore.ts","../services/PeripheralStore":"services/PeripheralStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx","./Params/Characteristics":"components/Params/Characteristics.tsx","./Params/Characteristic":"components/Params/Characteristic.tsx","./Params/Adverts":"components/Params/Adverts.tsx","./Params/Advert":"components/Params/Advert.tsx","./Params/Peripherals":"components/Params/Peripherals.tsx","./Params/Peripheral":"components/Params/Peripheral.tsx"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","../services/CharacteristicStore":"services/CharacteristicStore.ts","../services/ServiceParamStore":"services/ServiceParamStore.ts","../services/AdvertiseStore":"services/AdvertiseStore.ts","../services/PeripheralStore":"services/PeripheralStore.ts","../services/ScanStore":"services/ScanStore.ts","./Services":"components/Services.tsx","./Params/Service":"components/Params/Service.tsx","./Params/Characteristics":"components/Params/Characteristics.tsx","./Params/Characteristic":"components/Params/Characteristic.tsx","./Params/Adverts":"components/Params/Adverts.tsx","./Params/Advert":"components/Params/Advert.tsx","./Params/Peripherals":"components/Params/Peripherals.tsx","./Params/Peripheral":"components/Params/Peripheral.tsx","./Params/Scans":"components/Params/Scans.tsx","./Params/Scan":"components/Params/Scan.tsx"}],"../../node_modules/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js":[function(require,module,exports) {
 /*global cordova*/
 module.exports = {
 
@@ -69838,7 +70137,7 @@ var app = {
   }
 };
 app.initialize();
-},{"react":"../../node_modules/react/index.js","react-dom":"../../node_modules/react-dom/index.js","./components/app":"components/app.tsx"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-dom":"../../node_modules/react-dom/index.js","./components/app":"components/app.tsx"}],"../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -69860,26 +70159,46 @@ function Module(moduleName) {
 }
 
 module.bundle.Module = Module;
+var checkedAssets, assetsToAccept;
 var parent = module.bundle.parent;
 
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40085" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45217" + '/');
 
   ws.onmessage = function (event) {
+    checkedAssets = {};
+    assetsToAccept = [];
     var data = JSON.parse(event.data);
 
     if (data.type === 'update') {
-      console.clear();
-      data.assets.forEach(function (asset) {
-        hmrApply(global.parcelRequire, asset);
-      });
+      var handled = false;
       data.assets.forEach(function (asset) {
         if (!asset.isNew) {
-          hmrAccept(global.parcelRequire, asset.id);
+          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
+
+          if (didAccept) {
+            handled = true;
+          }
         }
+      }); // Enable HMR for CSS by default.
+
+      handled = handled || data.assets.every(function (asset) {
+        return asset.type === 'css' && asset.generated.js;
       });
+
+      if (handled) {
+        console.clear();
+        data.assets.forEach(function (asset) {
+          hmrApply(global.parcelRequire, asset);
+        });
+        assetsToAccept.forEach(function (v) {
+          hmrAcceptRun(v[0], v[1]);
+        });
+      } else {
+        window.location.reload();
+      }
     }
 
     if (data.type === 'reload') {
@@ -69967,7 +70286,7 @@ function hmrApply(bundle, asset) {
   }
 }
 
-function hmrAccept(bundle, id) {
+function hmrAcceptCheck(bundle, id) {
   var modules = bundle.modules;
 
   if (!modules) {
@@ -69975,9 +70294,27 @@ function hmrAccept(bundle, id) {
   }
 
   if (!modules[id] && bundle.parent) {
-    return hmrAccept(bundle.parent, id);
+    return hmrAcceptCheck(bundle.parent, id);
   }
 
+  if (checkedAssets[id]) {
+    return;
+  }
+
+  checkedAssets[id] = true;
+  var cached = bundle.cache[id];
+  assetsToAccept.push([bundle, id]);
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    return true;
+  }
+
+  return getParents(global.parcelRequire, id).some(function (id) {
+    return hmrAcceptCheck(global.parcelRequire, id);
+  });
+}
+
+function hmrAcceptRun(bundle, id) {
   var cached = bundle.cache[id];
   bundle.hotData = {};
 
@@ -70002,10 +70339,6 @@ function hmrAccept(bundle, id) {
 
     return true;
   }
-
-  return getParents(global.parcelRequire, id).some(function (id) {
-    return hmrAccept(global.parcelRequire, id);
-  });
 }
-},{}]},{},["../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.tsx"], null)
-//# sourceMappingURL=/index.map
+},{}]},{},["../../../../../../.nvm/versions/node/v8.11.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js","index.tsx"], null)
+//# sourceMappingURL=/index.js.map

@@ -19,6 +19,37 @@ declare namespace Params {
   }
 }
 
+declare namespace Enums {
+  enum BluetoothScanMode {
+    SCAN_MODE_OPPORTUNISTIC = -1,
+    SCAN_MODE_LOW_POWER = 0,
+    SCAN_MODE_BALANCED = 1,
+    SCAN_MODE_LOW_LATENCY = 2
+  }
+
+  enum BluetoothMatchMode {
+    MATCH_MODE_AGRESSIVE = 1,
+    MATCH_MODE_STICKY = 2
+  }
+
+  enum BluetoothMatchNum {
+    MATCH_NUM_ONE_ADVERTISEMENT = 1,
+    MATCH_NUM_FEW_ADVERTISEMENT = 2,
+    MATCH_NUM_MAX_ADVERTISEMENT = 3
+  }
+
+  enum BluetoothCallbackType {
+    CALLBACK_TYPE_ALL_MATCHES = 1,
+    CALLBACK_TYPE_FIRST_MATCH = 2,
+    CALLBACK_TYPE_MATCH_LOST = 4
+  }
+
+  interface Error {
+    code: number;
+    message: string;
+  }
+}
+
 declare namespace Services {
   type Status = BluetoothlePlugin.Status;
   class BluetoothService {
@@ -66,6 +97,16 @@ declare namespace Services {
     getIndex(periph: Params.peripheral): number;
     remove(periph: Params.peripheral): void;
     fetch(): Array<Params.peripheral>;
+    reset(): void;
+  }
+  interface IScanStore {
+    find(crit: string | number): BluetoothlePlugin.ScanParams;
+    createModel(): BluetoothlePlugin.ScanParams;
+    update(scan: BluetoothlePlugin.ScanParams): void;
+    createModel(): BluetoothlePlugin.ScanParams;
+    getIndex(scan: BluetoothlePlugin.ScanParams): number;
+    remove(scan: BluetoothlePlugin.ScanParams): void;
+    fetch(): Array<BluetoothlePlugin.ScanParams>;
     reset(): void;
   }
 }
