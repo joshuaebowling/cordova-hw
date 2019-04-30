@@ -78,7 +78,7 @@ const Scan = ({ scan }) => {
               <label htmlFor="services">Services</label>
               <input
                 type="text"
-                id="restoreKey"
+                id="services"
                 value={values.services}
                 onChange={handleChange}
               />

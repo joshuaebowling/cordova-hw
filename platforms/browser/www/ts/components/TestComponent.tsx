@@ -7,6 +7,7 @@ import BluetoothService from "../services/bluetooth";
 
 import StatusChecker from "./StatusChecker";
 import Advertise from "./Test/Advertise";
+import Scan from "./Test/Scan";
 
 const ENABLE_STATUS = {
   NO: 0,
@@ -160,7 +161,8 @@ export default ({ bluetoothle }) => {
   return (
     <div>
       <div>
-        <NavLink to="/test/advertisement">Test Advertisement</NavLink>
+        <NavLink to="/test/advertisement">Test Advertisement</NavLink> |
+        <NavLink to="/test/scan">Test Scan</NavLink>
         <Enable isEnabled={state.enabled} dispatch={dispatch} />
         <EnableError errorInfo={state.error} />
         <p>Discovery</p>
@@ -180,6 +182,7 @@ export default ({ bluetoothle }) => {
           path="/test/advertisement"
           render={e => <Advertise bluetoothle={bluetoothle} />}
         />
+        <Route path="/test/scan" render={e => <Scan />} />
       </div>
     </div>
   );

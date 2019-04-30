@@ -114,10 +114,8 @@ const ManageParams: Components.ServiceParams = ({ match }) => {
         }}
       />
       <Route
-        path={`${match.url}/scannew`}
-        render={({ match }) => {
-          return <Scan scan={ScanStore.createModel()} />;
-        }}
+        path={`${match.url}/peripheralnew`}
+        render={e => <Peripheral peripheral={PeripheralStore.createModel()} />}
       />
       <Route
         path={`${match.url}/scans`}
